@@ -29,7 +29,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>cz.vutbr.fit.layout</groupId>
-			<artifactId>api</artifactId>
+			<artifactId>layout-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>

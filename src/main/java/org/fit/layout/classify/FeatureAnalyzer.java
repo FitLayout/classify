@@ -10,10 +10,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.fit.layout.model.Area;
-import org.fit.layout.model.AreaNode;
-import org.fit.layout.model.AreaTree;
-import org.fit.layout.model.BoxNode;
+import org.fit.layout.impl.Area;
+import org.fit.layout.impl.AreaNode;
+import org.fit.layout.impl.AreaTree;
+import org.fit.layout.impl.BoxNode;
 import org.fit.layout.model.Rectangular;
 
 

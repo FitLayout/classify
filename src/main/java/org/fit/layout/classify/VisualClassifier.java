@@ -7,7 +7,7 @@ package org.fit.layout.classify;
 
 import java.util.HashMap;
 
-import org.fit.layout.model.AreaNode;
+import org.fit.layout.impl.AreaNode;
 
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.meta.FilteredClassifier;

@@ -8,7 +8,7 @@ package org.fit.layout.classify;
 import java.awt.Color;
 import java.util.HashMap;
 
-import org.fit.layout.model.AreaNode;
+import org.fit.layout.impl.AreaNode;
 
 /**
  * Background color analyzer. It gathers the statistics about the background color usage in areas.
