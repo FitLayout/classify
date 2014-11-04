@@ -5,18 +5,21 @@
  */
 package org.fit.layout.classify;
 
+import org.fit.layout.model.Area;
+import org.fit.layout.model.Tag;
+
 
 /**
  * A single tag that can be assigned to the visual areas. Each tag is identified with a string value.
  * 
  * @author burgetr
  */
-public class Tag
+public class TagImpl implements Tag
 {
     private String value;
     private Tagger source;
     
-    public Tag(String value, Tagger source)
+    public TagImpl(String value, Tagger source)
     {
         this.value = value;
         this.source = source;
@@ -60,7 +63,7 @@ public class Tag
             return false;
     }
     
-    public boolean allowsContinutation(AreaNode node)
+    public boolean allowsContinutation(Area node)
     {
         if (source != null)
             return source.allowsContinuation(node);

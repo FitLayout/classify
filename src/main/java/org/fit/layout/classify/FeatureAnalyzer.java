@@ -10,10 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.fit.layout.impl.Area;
-import org.fit.layout.impl.AreaNode;
-import org.fit.layout.impl.AreaTree;
-import org.fit.layout.impl.BoxNode;
+import org.fit.layout.model.Area;
 import org.fit.layout.model.Rectangular;
 
 
@@ -42,7 +39,7 @@ public class FeatureAnalyzer
     private double[] weights;
     
     private AreaTree tree;
-    private AreaNode root;
+    private Area root;
     private double avgfont;
     private ColorAnalyzer ca;
     private BackgroundColorAnalyzer bca;
@@ -77,7 +74,7 @@ public class FeatureAnalyzer
         return weights;
     }
     
-    public FeatureVector getFeatureVector(AreaNode node)
+    public FeatureVector getFeatureVector(Area node)
     {
         FeatureVector ret = new FeatureVector();
         Area area = node.getArea();

@@ -7,6 +7,8 @@ package org.fit.layout.classify;
 
 import java.util.Vector;
 
+import org.fit.layout.model.Area;
+
 /**
  * A generic tagger that is able to assign tags to areas.
  * 
@@ -19,7 +21,7 @@ public interface Tagger
      * Obtains the tag that this tagger assigns to the areas.
      * @return the tag string
      */
-    public Tag getTag();
+    public TagImpl getTag();
 
     /**
      * Obtains the relevance of the tagger.
@@ -32,14 +34,14 @@ public interface Tagger
      * @param node The examined area node.
      * @return <code>true</code> if the area should be tagged with the tag
      */
-    public boolean belongsTo(AreaNode node);
+    public boolean belongsTo(Area node);
     
     /**
      * Checks whether the area may be a continuation of a previously started area tagged with this tag.
      * @param node The examined area node.
      * @return <code>true</code> if the area may be a continuation of a tagged area
      */
-    public boolean allowsContinuation(AreaNode node);
+    public boolean allowsContinuation(Area node);
     
     /**
      * Checks whether the tag may be used for joining the areas in the visual area tree.
@@ -51,7 +53,7 @@ public interface Tagger
      * Check if the area tagged with this tag may be tagged with another tag. If not, this tag won't be used
      * for the areas already tagged with another tag.
      */
-    public boolean mayCoexistWith(Tag other);
+    public boolean mayCoexistWith(TagImpl other);
     
     /**
      * Extracts the parts of a source string that correspond to this tag.
