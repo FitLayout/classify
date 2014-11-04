@@ -8,9 +8,8 @@ package org.fit.layout.classify;
 import java.awt.Color;
 import java.util.HashMap;
 
-import org.fit.layout.impl.Area;
-import org.fit.layout.impl.AreaNode;
-import org.fit.layout.impl.BoxNode;
+import org.fit.layout.model.Area;
+import org.fit.layout.model.Box;
 
 /**
  * Foreground color analyzer. It gathers the statistics about the color usage in text (non-space characters).
@@ -21,14 +20,14 @@ public class ColorAnalyzer
 {
     /** Maps the color representation to the number of letters of that color in the document */
     private HashMap<Integer, Integer> colors;
-    private AreaNode root;
+    private Area root;
     private int totalLength;
     
     /**
      * Constructs a color analyzer.
      * @param root
      */
-    public ColorAnalyzer(AreaNode root)
+    public ColorAnalyzer(Area root)
     {
         colors = new HashMap<Integer, Integer>();
         this.root = root;
@@ -62,25 +61,24 @@ public class ColorAnalyzer
      * @param color the color to be tested.
      * @return the percentage (0..1)
      */
-    public double getColorPercentage(AreaNode node)
+    public double getColorPercentage(Area node)
     {
         int tlen = 0;
         double sum = 0;
         
-    	Area area = node.getArea();
-    	for (BoxNode box : area.getBoxes())
+    	for (Box box : node.getBoxes())
     	{
     		int len = letterLength(box.getText());
     		if (len > 0)
     		{
-    			sum += getColorPercentage(box.getBox().getVisualContext().getColor()) * len;
+    			sum += getColorPercentage(box.getColor()) * len;
     			tlen += len;
     		}
     	}
         
         for (int i = 0; i < node.getChildCount(); i++)
         {
-            AreaNode child = node.getChildArea(i);
+            Area child = node.getChildArea(i);
             int nlen = letterLength(child.getText());
             tlen += nlen;
             sum += getColorPercentage(child) * nlen;
@@ -97,15 +95,14 @@ public class ColorAnalyzer
      * Recursively computes the statistics of the individual colors in a subtree.
      * @param root the root of the subtree
      */
-    private void computeRootStatistics(AreaNode root)
+    private void computeRootStatistics(Area root)
     {
-    	Area area = root.getArea();
-    	for (BoxNode box : area.getBoxes())
+    	for (Box box : root.getBoxes())
     	{
     		int len = letterLength(box.getText());
     		if (len > 0)
     		{
-    			int key = colorKey(box.getBox().getVisualContext().getColor());
+    			int key = colorKey(box.getColor());
     			Integer val = colors.get(key);
     			if (val == null) val = 0;
     			val += len;

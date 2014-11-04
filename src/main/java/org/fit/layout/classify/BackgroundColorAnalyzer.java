@@ -8,7 +8,8 @@ package org.fit.layout.classify;
 import java.awt.Color;
 import java.util.HashMap;
 
-import org.fit.layout.impl.AreaNode;
+import org.fit.layout.model.Area;
+
 
 /**
  * Background color analyzer. It gathers the statistics about the background color usage in areas.
@@ -19,19 +20,19 @@ public class BackgroundColorAnalyzer
 {
     /** Maps the color representation to the total area of that color in the document */
     private HashMap<Integer, Integer> colors;
-    private AreaNode root;
+    private Area root;
     private int totalArea;
     
     /**
      * Constructs a color analyzer.
      * @param root
      */
-    public BackgroundColorAnalyzer(AreaNode root)
+    public BackgroundColorAnalyzer(Area root)
     {
         colors = new HashMap<Integer, Integer>();
         this.root = root;
         computeRootStatistics(this.root);
-        totalArea = this.root.getArea().getSquareArea();
+        totalArea = root.getBounds().getArea();
         System.err.println("We have " + colors.size() + " different background colors, " + totalArea + " total area");
     }
     
@@ -60,10 +61,10 @@ public class BackgroundColorAnalyzer
      * @param color the color to be tested.
      * @return the percentage (0..1) for background-separated nodes or a negative value for non-separated nodes.
      */
-    public double getColorPercentage(AreaNode node)
+    public double getColorPercentage(Area area)
     {
-        if (node.isBackgroundSeparated())
-            return getColorPercentage(node.getEffectiveBackgroundColor());
+        if (area.isBackgroundSeparated())
+            return getColorPercentage(getEffectiveBackgroundColor(area));
         else
             return -1.0;
     }
@@ -74,18 +75,18 @@ public class BackgroundColorAnalyzer
      * Recursively computes the statistics of the individual colors in a subtree.
      * @param root the root of the subtree
      */
-    private void computeRootStatistics(AreaNode root)
+    private void computeRootStatistics(Area root)
     {
         if (root.isBackgroundSeparated())
         {
-            Color color = root.getArea().getBackgroundColor();
+            Color color = root.getBackgroundColor();
     
             if (color != null)
             {
                 int key = colorKey(color);
                 Integer val = colors.get(key);
                 if (val == null) val = 0;
-                val += root.getArea().getSquareArea();
+                val += root.getBounds().getArea();
                 colors.put(key, val);
             }
         }
@@ -102,4 +103,23 @@ public class BackgroundColorAnalyzer
         return (color.getRed() / 16) * 256 + (color.getGreen() / 16) * 16 + (color.getBlue() / 16);
     }
 
+    /**
+     * Computes the effective (visible) background color of an area considering
+     * transparency and parent areas.
+     * @param area The area
+     * @return the visible background color
+     */
+    public static Color getEffectiveBackgroundColor(Area area)
+    {
+        if (area.getBackgroundColor() != null)
+            return area.getBackgroundColor();
+        else
+        {
+            if (area.getParentArea() != null)
+                return getEffectiveBackgroundColor(area.getParentArea());
+            else
+                return Color.WHITE; //use white as the default root color
+        }
+    }
+    
 }
