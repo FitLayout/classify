@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.fit.layout.model.Area;
+import org.fit.layout.model.Box;
 import org.fit.layout.model.Rectangular;
 
 
@@ -38,28 +39,21 @@ public class FeatureAnalyzer
     
     private double[] weights;
     
-    private AreaTree tree;
     private Area root;
-    private double avgfont;
+    private float avgfont;
     private ColorAnalyzer ca;
     private BackgroundColorAnalyzer bca;
     
-    public FeatureAnalyzer(AreaTree tree)
+    public FeatureAnalyzer(Area root)
     {
         weights = DEFAULT_WEIGHTS;
-        setTree(tree);
+        setTree(root);
     }
     
-    public AreaTree getTree()
+    public void setTree(Area rootNode)
     {
-        return tree;
-    }
-    
-    public void setTree(AreaTree tree)
-    {
-        this.tree = tree;
-        root = tree.getRoot();
-        avgfont = root.getArea().getAverageFontSize();
+        root = rootNode;
+        avgfont = root.getFontSize();
         ca = new ColorAnalyzer(root);
         bca = new BackgroundColorAnalyzer(root);
     }
@@ -77,15 +71,14 @@ public class FeatureAnalyzer
     public FeatureVector getFeatureVector(Area node)
     {
         FeatureVector ret = new FeatureVector();
-        Area area = node.getArea();
         String text = node.getText();
         int plen = text.length();
         if (plen == 0) plen = 1; //kvuli deleni nulou
         
-        ret.setFontSize(area.getAverageFontSize() / avgfont);
-        ret.setWeight(area.getAverageFontWeight());
-        ret.setStyle(area.getAverageFontStyle());
-        ret.setReplaced(area.isReplaced());
+        ret.setFontSize(node.getFontSize() / avgfont);
+        ret.setWeight(node.getFontWeight());
+        ret.setStyle(node.getFontStyle());
+        ret.setReplaced(node.isReplaced());
         ret.setAabove(countAreasAbove(node));
         ret.setAbelow(countAreasBelow(node));
         ret.setAleft(countAreasLeft(node));
@@ -116,7 +109,7 @@ public class FeatureAnalyzer
      * Computes the indentation metric.
      * @return the indentation metric (0..1) where 1 is for the non-indented areas, 0 for the most indented areas.
      */
-    public double getIndentation(AreaNode node)
+    public double getIndentation(Area node)
     {
         final double max_levels = 3;
         
@@ -136,12 +129,11 @@ public class FeatureAnalyzer
      * Computes the markedness of the area. The markedness generally describes the visual importance of the area based on different criteria.
      * @return the computed expressiveness
      */
-    public double getMarkedness(AreaNode node)
+    public double getMarkedness(Area node)
     {
-        Area area = node.getArea();
-        double fsz = area.getAverageFontSize() / avgfont; //use relative font size, 0 is the normal font
-        double fwt = area.getAverageFontWeight();
-        double fst = area.getAverageFontStyle();
+        double fsz = node.getFontSize() / avgfont; //use relative font size, 0 is the normal font
+        double fwt = node.getFontWeight();
+        double fst = node.getFontStyle();
         double ind = getIndentation(node);
         double cen = node.isCentered() ? 1.0 : 0.0;
         double contrast = getContrast(node);
@@ -170,23 +162,23 @@ public class FeatureAnalyzer
      * @param r the grid region of the area to be examined
      * @return the number of visual areas in the specified area of the grid
      */
-    private int countAreas(AreaNode a, Rectangular r)
+    private int countAreas(Area a, Rectangular r)
     {
         int ret = 0;
         
         for (int i = 0; i < a.getChildCount(); i++)
         {
-            AreaNode n = a.getChildArea(i);
+            Area n = a.getChildArea(i);
             if (n.getGridPosition().intersects(r))
                 ret++;
         }
         return ret;
     }
     
-    private int countAreasAbove(AreaNode a)
+    private int countAreasAbove(Area a)
     {
         Rectangular gp = a.getGridPosition();
-        AreaNode parent = a.getParentArea();
+        Area parent = a.getParentArea();
         if (parent != null)
         {
             Rectangular r = new Rectangular(gp.getX1(), 0, gp.getX2(), gp.getY1() - 1);
@@ -196,10 +188,10 @@ public class FeatureAnalyzer
             return 0;
     }
 
-    private int countAreasBelow(AreaNode a)
+    private int countAreasBelow(Area a)
     {
         Rectangular gp = a.getGridPosition();
-        AreaNode parent = a.getParentArea();
+        Area parent = a.getParentArea();
         if (parent != null)
         {
             Rectangular r = new Rectangular(gp.getX1(), gp.getY2()+1, gp.getX2(), Integer.MAX_VALUE);
@@ -209,10 +201,10 @@ public class FeatureAnalyzer
             return 0;
     }
 
-    private int countAreasLeft(AreaNode a)
+    private int countAreasLeft(Area a)
     {
         Rectangular gp = a.getGridPosition();
-        AreaNode parent = a.getParentArea();
+        Area parent = a.getParentArea();
         if (parent != null)
         {
             Rectangular r = new Rectangular(0, gp.getY1(), gp.getX1() - 1, gp.getY2());
@@ -222,10 +214,10 @@ public class FeatureAnalyzer
             return 0;
     }
 
-    private int countAreasRight(AreaNode a)
+    private int countAreasRight(Area a)
     {
         Rectangular gp = a.getGridPosition();
-        AreaNode parent = a.getParentArea();
+        Area parent = a.getParentArea();
         if (parent != null)
         {
             Rectangular r = new Rectangular(gp.getX2()+1, gp.getY1(), Integer.MAX_VALUE, gp.getY2());
@@ -256,15 +248,15 @@ public class FeatureAnalyzer
         return ret;
     }
     
-    private double getAverageTextLuminosity(AreaNode a)
+    private double getAverageTextLuminosity(Area a)
     {
         double sum = 0;
         int cnt = 0;
         
-        if (a.getArea().hasContent())
+        if (!a.getBoxes().isEmpty()) //has some content
         {
             int l = a.getText().length();
-            sum += a.getArea().getAverageColorLuminosity() * l;
+            sum += a.getColorLuminosity() * l;
             cnt += l;
         }
         
@@ -281,7 +273,7 @@ public class FeatureAnalyzer
             return 0;
     }
     
-    private double getBackgroundLuminosity(AreaNode a)
+    private double getBackgroundLuminosity(Area a)
     {
         Color bg = a.getEffectiveBackgroundColor();
         if (bg != null)
@@ -290,7 +282,7 @@ public class FeatureAnalyzer
             return 0;
     }
     
-    private double getContrast(AreaNode a)
+    private double getContrast(Area a)
     {
         double bb = getBackgroundLuminosity(a);
         double tb = getAverageTextLuminosity(a);
@@ -318,14 +310,14 @@ public class FeatureAnalyzer
         return lr * 0.2126 +  lg * 0.7152 + lb * 0.0722;
     }
 
-    private double getRelX(AreaNode a)
+    private double getRelX(Area a)
     {
-        int objx1 = a.getX();
+        int objx1 = a.getX1();
         if (objx1 < 0) objx1 = 0;
         int objx2 = a.getX2();
         if (objx2 < 0) objx2 = 0;
         
-        int topx1 = root.getX();
+        int topx1 = root.getX1();
         if (topx1 < 0) topx1 = 0;
         int topx2 = root.getX2();
         if (topx2 < 0) topx2 = 0;
@@ -337,14 +329,14 @@ public class FeatureAnalyzer
         return midx / topw;
     }
 
-    public double getRelY(AreaNode a)
+    public double getRelY(Area a)
     {
-        int objy1 = a.getY();
+        int objy1 = a.getY1();
         if (objy1 < 0) objy1 = 0;
         int objy2 = a.getY2();
         if (objy2 < 0) objy2 = 0;
         
-        int topy1 = root.getY();
+        int topy1 = root.getY1();
         if (topy1 < 0) topy1 = 0;
         int topy2 = root.getY2();
         if (topy2 < 0) topy2 = 0;
@@ -356,17 +348,17 @@ public class FeatureAnalyzer
         return midy / toph;
     }
     
-    public int getLineCount(AreaNode a)
+    public int getLineCount(Area a)
     {
         final int LINE_THRESHOLD = 5; //minimal distance between lines in pixels
         
-        List<BoxNode> leaves = a.getAllBoxes();
+        List<Box> leaves = a.getAllBoxes();
         Collections.sort(leaves, new AbsoluteYPositionComparator());
         int lines = 0;
         int lastpos = -10;
-        for (BoxNode leaf : leaves)
+        for (Box leaf : leaves)
         {
-            int pos = leaf.getBox().getAbsoluteBounds().y;
+            int pos = leaf.getBounds().getY1();
             if (pos - lastpos > LINE_THRESHOLD)
             {
                 lines++;
@@ -382,28 +374,28 @@ public class FeatureAnalyzer
      * Updates the weights according to the used style of presentation based on statistical tag analysis.
      * @param root
      */
-    public void updateWeights(AreaNode root, SearchTree stree)
+    /*public void updateWeights(Area root, SearchTree stree)
     {
-    }
+    }*/
     
     
     //============================================================================================
     
-    class AbsoluteXPositionComparator implements Comparator<BoxNode>
+    class AbsoluteXPositionComparator implements Comparator<Box>
     {
         @Override
-        public int compare(BoxNode o1, BoxNode o2)
+        public int compare(Box o1, Box o2)
         {
-            return o1.getBox().getAbsoluteBounds().x - o2.getBox().getAbsoluteBounds().x; 
+            return o1.getBounds().getX1() - o2.getBounds().getX1(); 
         }
     }
     
-    class AbsoluteYPositionComparator implements Comparator<BoxNode>
+    class AbsoluteYPositionComparator implements Comparator<Box>
     {
         @Override
-        public int compare(BoxNode o1, BoxNode o2)
+        public int compare(Box o1, Box o2)
         {
-            return o1.getBox().getAbsoluteBounds().y - o2.getBox().getAbsoluteBounds().y; 
+            return o1.getBounds().getY1() - o2.getBounds().getY1(); 
         }
     }
     
