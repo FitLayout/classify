@@ -13,6 +13,7 @@ import java.util.List;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Box;
 import org.fit.layout.model.Rectangular;
+import org.fit.layout.model.Tag;
 
 
 /**
@@ -99,7 +100,8 @@ public class FeatureAnalyzer
         ret.setCperc(ca.getColorPercentage(node));
         ret.setBcperc(bca.getColorPercentage(node));
         ret.setMarkedness(getMarkedness(node));
-        ret.setTagLevel(node.getTagLevel());
+        Tag t = node.getMostSupportedTag();
+        ret.setTagLevel(t == null ? -1 : t.getLevel());
         
         //TODO ostatni vlastnosti obdobne
         return ret;
