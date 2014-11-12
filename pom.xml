@@ -6,7 +6,7 @@
 	 -->
 	
 	<groupId>cz.vutbr.fit.layout</groupId>
-	<artifactId>classify</artifactId>
+	<artifactId>layout-classify</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>LayoutClassify</name>
 	
