@@ -28,6 +28,9 @@ public class FeatureAnalyzer
     
     public static final double[] DEFAULT_WEIGHTS = {1000.0, 2.0, 0.5, 5.0, 0.0, 1.0, 0.5, 100.0}; 
     
+    /** Maximal difference between left and right margin to consider the area to be centered (percentage of the parent area width) */
+    public static final double CENTERING_THRESHOLD = 0.1;
+    
     //weights
     private static final int WFSZ = 0; 
     private static final int WFWT = 1;
@@ -108,26 +111,6 @@ public class FeatureAnalyzer
     }
     
     /**
-     * Computes the indentation metric.
-     * @return the indentation metric (0..1) where 1 is for the non-indented areas, 0 for the most indented areas.
-     */
-    public double getIndentation(Area node)
-    {
-        final double max_levels = 3;
-        
-        if (node.getPreviousOnLine() != null)
-        	return getIndentation(node.getPreviousOnLine()); //use the indentation of the first one on the line
-        else
-        {
-	        double ind = max_levels;
-	        if (!node.isCentered() && node.getParentArea() != null)
-	            ind = ind - (node.getGridX() - node.getParentArea().getGrid().getMinIndent());
-	        if (ind < 0) ind = 0;
-	        return ind / max_levels;
-        }
-    }
-    
-    /**
      * Computes the markedness of the area. The markedness generally describes the visual importance of the area based on different criteria.
      * @return the computed expressiveness
      */
@@ -137,7 +120,7 @@ public class FeatureAnalyzer
         double fwt = node.getFontWeight();
         double fst = node.getFontStyle();
         double ind = getIndentation(node);
-        double cen = node.isCentered() ? 1.0 : 0.0;
+        double cen = isCentered(node) ? 1.0 : 0.0;
         double contrast = getContrast(node);
         double cp = 1.0 - ca.getColorPercentage(node);
         double bcp = bca.getColorPercentage(node);
@@ -159,6 +142,126 @@ public class FeatureAnalyzer
     //========================================================================================================
     
     /**
+     * Checks whether the area is horizontally centered within its parent area
+     * @return <code>true</code> if the area is centered
+     */
+    public boolean isCentered(Area area)
+    {
+        return isCentered(area, true, true) == 1;
+    }
+    
+    /**
+     * Tries to guess whether the area is horizontally centered within its parent area 
+     * @param askBefore may we compare the alignment with the preceding siblings?
+     * @param askAfter may we compare the alignment with the following siblings?
+     * @return 0 when certailny not centered, 1 when certainly centered, 2 when not sure (nothing to compare with and no margins around)
+     */
+    private int isCentered(Area area, boolean askBefore, boolean askAfter)
+    {
+        Area parent = area.getParentArea();
+        if (parent != null)
+        {
+            int left = area.getX1() - parent.getX1();
+            int right = parent.getX2() - area.getX2();
+            int limit = (int) (((left + right) / 2.0) * CENTERING_THRESHOLD);
+            if (limit == 0) limit = 1; //we always allow +-1px
+            //System.out.println(this + " left=" + left + " right=" + right + " limit=" + limit);
+            boolean middle = Math.abs(left - right) <= limit; //first guess - check if it is placed in the middle
+            boolean fullwidth = left == 0 && right == 0; //centered because of full width
+            
+            if (!middle && !fullwidth) //not full width and certainly not in the middle
+            {
+                return 0; 
+            }
+            else //may be centered - check the alignment
+            {
+                //compare the alignent with the previous and/or the next child
+                Area prev = null;
+                Area next = null;
+                int pc = 2; //previous centered?
+                int nc = 2; //next cenrered?
+                if (askBefore || askAfter)
+                {
+                    if (askBefore)
+                    {
+                        prev = area.getPreviousSibling();
+                        while (prev != null && (pc = isCentered(prev, true, false)) == 2)
+                            prev = prev.getPreviousSibling();
+                    }
+                    if (askAfter)
+                    {
+                        next = area.getNextSibling();
+                        while (next != null && (nc = isCentered(next, false, true)) == 2)
+                            next = next.getNextSibling();
+                    }
+                }
+                
+                if (pc != 2 || nc != 2) //we have something for comparison
+                {
+                    if (fullwidth) //cannot guess, compare with others
+                    {
+                        if (pc != 0 && nc != 0) //something around is centered - probably centered
+                            return 1;
+                        else
+                            return 0;
+                    }
+                    else //probably centered, if it is not left- or right-aligned with something around
+                    {
+                        if (prev != null && lrAligned(area, prev) == 1 ||
+                            next != null && lrAligned(area, next) == 1)
+                            return 0; //aligned, not centered
+                        else
+                            return 1; //probably centered
+                    }
+                }
+                else //nothing to compare, just guess
+                {
+                    if (fullwidth)
+                        return 2; //cannot guess from anything
+                    else
+                        return (middle ? 1 : 0); //nothing to compare with - guess from the position
+                }
+            }
+        }
+        else
+            return 2; //no parent - we don't know
+    }
+    
+    /**
+     * Checks if the areas are left- or right-aligned.
+     * @return 0 if not, 1 if yes, 2 if both left and right
+     */
+    private int lrAligned(Area a1, Area a2)
+    {
+        if (a1.getX1() == a2.getX1())
+            return (a1.getX2() == a2.getX2()) ? 2 : 1;
+        else if (a1.getX2() == a2.getX2())
+            return 1;
+        else
+            return 0;
+    }
+
+    /**
+     * Computes the indentation metric.
+     * @return the indentation metric (0..1) where 1 is for the non-indented areas, 0 for the most indented areas.
+     */
+    public double getIndentation(Area node)
+    {
+        final double max_levels = 3;
+        
+        if (node.getTopology().getPreviousOnLine() != null)
+            return getIndentation(node.getTopology().getPreviousOnLine()); //use the indentation of the first one on the line
+        else
+        {
+            double ind = max_levels;
+            if (!isCentered(node) && node.getParentArea() != null)
+                ind = ind - (node.getTopology().getPosition().getX1() - node.getParentArea().getTopology().getMinIndent());
+            if (ind < 0) ind = 0;
+            return ind / max_levels;
+        }
+    }
+    
+    /**
      * Counts the number of sub-areas in the specified region of the area
      * @param a the area to be examined
      * @param r the grid region of the area to be examined
@@ -171,7 +274,7 @@ public class FeatureAnalyzer
         for (int i = 0; i < a.getChildCount(); i++)
         {
             Area n = a.getChildArea(i);
-            if (n.getGridPosition().intersects(r))
+            if (n.getTopology().getPosition().intersects(r))
                 ret++;
         }
         return ret;
@@ -179,7 +282,7 @@ public class FeatureAnalyzer
     
     private int countAreasAbove(Area a)
     {
-        Rectangular gp = a.getGridPosition();
+        Rectangular gp = a.getTopology().getPosition();
         Area parent = a.getParentArea();
         if (parent != null)
         {
@@ -192,7 +295,7 @@ public class FeatureAnalyzer
 
     private int countAreasBelow(Area a)
     {
-        Rectangular gp = a.getGridPosition();
+        Rectangular gp = a.getTopology().getPosition();
         Area parent = a.getParentArea();
         if (parent != null)
         {
@@ -205,7 +308,7 @@ public class FeatureAnalyzer
 
     private int countAreasLeft(Area a)
     {
-        Rectangular gp = a.getGridPosition();
+        Rectangular gp = a.getTopology().getPosition();
         Area parent = a.getParentArea();
         if (parent != null)
         {
@@ -218,7 +321,7 @@ public class FeatureAnalyzer
 
     private int countAreasRight(Area a)
     {
-        Rectangular gp = a.getGridPosition();
+        Rectangular gp = a.getTopology().getPosition();
         Area parent = a.getParentArea();
         if (parent != null)
         {
@@ -258,7 +361,7 @@ public class FeatureAnalyzer
         if (!a.getBoxes().isEmpty()) //has some content
         {
             int l = a.getText().length();
-            sum += a.getColorLuminosity() * l;
+            sum += getAverageBoxColorLuminosity(a) * l;
             cnt += l;
         }
         
@@ -273,6 +376,24 @@ public class FeatureAnalyzer
             return sum / cnt;
         else
             return 0;
+    }
+    
+    public double getAverageBoxColorLuminosity(Area area)
+    {
+        if (area.getBoxes().isEmpty())
+            return 0;
+        else
+        {
+            double sum = 0;
+            int len = 0;
+            for (Box box : area.getBoxes())
+            {
+                int l = box.getText().length(); 
+                sum += colorLuminosity(box.getColor()) * l;
+                len += l;
+            }
+            return sum / len;
+        }
     }
     
     private double getBackgroundLuminosity(Area a)

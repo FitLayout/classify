@@ -18,13 +18,16 @@ public class TagImpl implements Tag
 {
     private String value;
     private Tagger source;
+    private int level;
     
     public TagImpl(String value, Tagger source)
     {
         this.value = value;
         this.source = source;
+        this.level = 0;
     }
 
+    @Override
     public String getValue()
     {
         return value;
@@ -33,6 +36,17 @@ public class TagImpl implements Tag
     public Tagger getSource()
     {
         return source;
+    }
+
+    @Override
+    public int getLevel()
+    {
+        return level;
+    }
+
+    public void setLevel(int level)
+    {
+        this.level = level;
     }
 
     @Override

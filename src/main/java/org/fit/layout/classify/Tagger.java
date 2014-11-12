@@ -8,6 +8,7 @@ package org.fit.layout.classify;
 import java.util.Vector;
 
 import org.fit.layout.model.Area;
+import org.fit.layout.model.Tag;
 
 /**
  * A generic tagger that is able to assign tags to areas.
@@ -53,7 +54,7 @@ public interface Tagger
      * Check if the area tagged with this tag may be tagged with another tag. If not, this tag won't be used
      * for the areas already tagged with another tag.
      */
-    public boolean mayCoexistWith(TagImpl other);
+    public boolean mayCoexistWith(Tag other);
     
     /**
      * Extracts the parts of a source string that correspond to this tag.

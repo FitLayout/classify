@@ -6,8 +6,15 @@
 package org.fit.layout.classify;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.fit.layout.impl.AreaNode;
+import org.fit.layout.classify.taggers.DateTagger;
+import org.fit.layout.classify.taggers.PersonsTagger;
+import org.fit.layout.classify.taggers.TimeTagger;
+import org.fit.layout.classify.taggers.TitleTagger;
+import org.fit.layout.model.Area;
+import org.fit.layout.model.Tag;
 
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.meta.FilteredClassifier;
@@ -27,8 +34,8 @@ public class VisualClassifier
 	private AbstractClassifier classifier;
 	private Instances trainset;
 	private Instances testset;
-	private HashMap<AreaNode, Instance> mapping; //mapping testing instances to area tree nodes
-	private AreaNode testRoot;
+	private HashMap<Area, Instance> mapping; //mapping testing instances to area tree nodes
+	private Area testRoot;
 	private FeatureAnalyzer features;
 	
 	private Tagger tTime = new TimeTagger();
@@ -52,7 +59,7 @@ public class VisualClassifier
 	 * 
 	 * @param root the root node of the area tree
 	 */
-	public void classifyTree(AreaNode root, FeatureAnalyzer features)
+	public void classifyTree(Area root, FeatureAnalyzer features)
 	{
 	    if (classifier != null)
 	    {
@@ -62,14 +69,14 @@ public class VisualClassifier
     	    //create a new empty set with the same header as the training set
     	    testset = new Instances(trainset, 0);
     	    //create an empty mapping
-    	    mapping = new HashMap<AreaNode, Instance>();
+    	    mapping = new HashMap<Area, Instance>();
     	    //fill the set with the data
     	    recursivelyExtractAreaData(testRoot);
     	    System.out.println("done");
 	    }
 	}
 	
-    public String classifyArea(AreaNode area)
+    public String classifyArea(Area area)
     {
         if (mapping != null)
         {
@@ -146,7 +153,7 @@ public class VisualClassifier
         }
 	}
 	
-	private void recursivelyExtractAreaData(AreaNode root)
+	private void recursivelyExtractAreaData(Area root)
 	{
 	    //describe the area and add to the testing set
 	    Instance data = computeAreaFeatures(root, testset);
@@ -158,7 +165,20 @@ public class VisualClassifier
 	        recursivelyExtractAreaData(root.getChildArea(i));
 	}
 
-	private Instance computeAreaFeatures(AreaNode node, Instances dataset)
+    /**
+     * Obtains all the tags assigned to this area and its child areas (not all descendant areas).
+     * @return a set of tags
+     */
+    protected Set<Tag> getAllTags(Area area)
+    {
+        Set<Tag> ret = new HashSet<Tag>(area.getTags().keySet());
+        for (int i = 0; i < area.getChildCount(); i++)
+            ret.addAll(area.getChildArea(i).getTags().keySet());
+        return ret;
+    }
+    
+	
+	private Instance computeAreaFeatures(Area node, Instances dataset)
 	{
 	    FeatureVector f = features.getFeatureVector(node);
 	    
@@ -191,10 +211,11 @@ public class VisualClassifier
         inst.setValue(i++, f.getContrast());
         inst.setValue(i++, f.getMarkedness());
         inst.setValue(i++, f.getCperc());
-        inst.setValue(i++, node.getAllTags().contains(tDate.getTag())?"true":"false");
-        inst.setValue(i++, node.getAllTags().contains(tTime.getTag())?"true":"false");
-        inst.setValue(i++, node.getAllTags().contains(tPersons.getTag())?"true":"false");
-        inst.setValue(i++, node.getAllTags().contains(tTitle.getTag())?"true":"false");
+        Set<Tag> tags = getAllTags(node);
+        inst.setValue(i++, tags.contains(tDate.getTag())?"true":"false");
+        inst.setValue(i++, tags.contains(tTime.getTag())?"true":"false");
+        inst.setValue(i++, tags.contains(tPersons.getTag())?"true":"false");
+        inst.setValue(i++, tags.contains(tTitle.getTag())?"true":"false");
 	    
 	    return inst;
 	}
