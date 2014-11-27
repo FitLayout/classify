@@ -22,7 +22,7 @@ public interface Tagger
      * Obtains the tag that this tagger assigns to the areas.
      * @return the tag string
      */
-    public TagImpl getTag();
+    public TextTag getTag();
 
     /**
      * Obtains the relevance of the tagger.

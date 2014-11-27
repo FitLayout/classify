@@ -11,7 +11,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.fit.layout.classify.TagImpl;
+import org.fit.layout.classify.TextTag;
 import org.fit.layout.classify.Tagger;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
@@ -56,9 +56,9 @@ public class DateTagger implements Tagger
         dw.add("december");
     }
     
-    public TagImpl getTag()
+    public TextTag getTag()
     {
-        return new TagImpl("date", this);
+        return new TextTag("date", this);
     }
 
     public double getRelevance()

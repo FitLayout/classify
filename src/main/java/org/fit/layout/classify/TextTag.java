@@ -10,17 +10,18 @@ import org.fit.layout.model.Tag;
 
 
 /**
- * A single tag that can be assigned to the visual areas. Each tag is identified with a string value.
+ * A tag that can be assigned to the visual areas obtained using a text
+ * classification by a particular tagger.
  * 
  * @author burgetr
  */
-public class TagImpl implements Tag
+public class TextTag implements Tag
 {
     private String value;
     private Tagger source;
     private int level;
     
-    public TagImpl(String value, Tagger source)
+    public TextTag(String value, Tagger source)
     {
         this.value = value;
         this.source = source;

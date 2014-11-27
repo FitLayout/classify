@@ -9,7 +9,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.fit.layout.classify.TagImpl;
+import org.fit.layout.classify.TextTag;
 import org.fit.layout.classify.Tagger;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
@@ -23,9 +23,9 @@ public class TimeTagger implements Tagger
 {
     protected Pattern[] timeexpr = {Pattern.compile("[0-2]?[0-9][:\\.][0-5][0-9]([ap])?m?")};
     
-    public TagImpl getTag()
+    public TextTag getTag()
     {
-        return new TagImpl("time", this);
+        return new TextTag("time", this);
     }
 
     public double getRelevance()

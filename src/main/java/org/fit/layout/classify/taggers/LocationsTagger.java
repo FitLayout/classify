@@ -8,7 +8,7 @@ package org.fit.layout.classify.taggers;
 import java.util.List;
 import java.util.Vector;
 
-import org.fit.layout.classify.TagImpl;
+import org.fit.layout.classify.TextTag;
 import org.fit.layout.classify.Tagger;
 import org.fit.layout.classify.TreeTagger;
 import org.fit.layout.model.Area;
@@ -36,9 +36,9 @@ public class LocationsTagger implements Tagger
         classifier = TreeTagger.sharedClassifier;
     }
 
-    public TagImpl getTag()
+    public TextTag getTag()
     {
-        return new TagImpl("locations", this);
+        return new TextTag("locations", this);
     }
 
     public double getRelevance()
