@@ -5,6 +5,7 @@
  */
 package org.fit.layout.classify;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -107,12 +108,13 @@ public class VisualClassifier
 	
 	//==================================================================
 	
-	private void train(String trainfile, int classindex)
+	private void train(String resource, int classindex)
 	{
         try
         {
             //open the data file
-            DataSource source = new DataSource(trainfile);
+            InputStream is = ClassLoader.getSystemResourceAsStream(resource);
+            DataSource source = new DataSource(is);
             Instances tdata = source.getDataSet();
             tdata.setClassIndex(classindex);
             
