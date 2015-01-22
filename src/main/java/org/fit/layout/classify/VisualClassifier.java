@@ -90,14 +90,14 @@ public class VisualClassifier
                 } catch (Exception e) {
                     System.out.println("classifyArea: error: " + e.getMessage());
                     e.printStackTrace();
-                    return "???";
+                    return null;
                 }
             }
             else
-                return "--ninst--";
+                return null;
         }
         else
-            return "--nmap--";
+            return null;
     }
     
     public String getClassName(int index)
