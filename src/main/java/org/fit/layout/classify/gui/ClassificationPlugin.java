@@ -7,12 +7,16 @@ package org.fit.layout.classify.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 
 import org.fit.layout.gui.Browser;
 import org.fit.layout.gui.BrowserPlugin;
+import org.fit.layout.model.Area;
+import org.fit.layout.model.Tag;
 
 /**
  * 
@@ -56,11 +60,9 @@ public class ClassificationPlugin implements BrowserPlugin
             {
                 public void actionPerformed(ActionEvent arg0)
                 {
-                    /*Area node = (Area) areaTree.getLastSelectedPathComponent();
+                    Area node = browser.getSelectedArea();
                     if (node != null)
-                    {
-                        colorizeTags(node);
-                    }*/
+                        colorizeTags(node, "FitLayout.TextTag");
                 }
             });
         }
@@ -76,14 +78,36 @@ public class ClassificationPlugin implements BrowserPlugin
             {
                 public void actionPerformed(ActionEvent e)
                 {
-                    /*Area node = (Area) areaTree.getLastSelectedPathComponent();
+                    Area node = browser.getSelectedArea();
                     if (node != null)
-                    {
-                        colorizeClasses(node);
-                    }*/
+                        colorizeTags(node, "FitLayout.VisualTag");
                 }
             });
         }
         return classesButton;
     }
+    
+    //=================================================================
+    
+    private void colorizeTags(Area root, String type)
+    {
+        recursiveColorizeTags(root, type);
+        browser.updateDisplay();
+    }
+    
+    private void recursiveColorizeTags(Area root, String type)
+    {
+        //find tags of the given type
+        Set<Tag> tags = new HashSet<Tag>();
+        for (Tag tag : root.getTags().keySet())
+        {
+            if (tag.getType().equals(type))
+                tags.add(tag);
+        }
+        //display the tags
+        browser.getOutputDisplay().colorizeByTags(root, tags);
+        for (Area child : root.getChildAreas())
+            recursiveColorizeTags(child, type);
+    }
+    
 }

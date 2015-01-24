@@ -53,7 +53,7 @@ public class TextTag implements Tag
     @Override
     public String getType()
     {
-        return "org.fit.layout.classify.TextTag";
+        return "FitLayout.TextTag";
     }
 
     @Override

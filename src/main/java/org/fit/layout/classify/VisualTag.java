@@ -18,7 +18,7 @@ public class VisualTag extends DefaultTag
     public VisualTag(String value)
     {
         super(value);
-        setType("org.fit.layout.classify.VisualTag");
+        setType("FitLayout.VisualTag");
     }
 
 }
