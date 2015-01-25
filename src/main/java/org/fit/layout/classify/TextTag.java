@@ -5,8 +5,8 @@
  */
 package org.fit.layout.classify;
 
+import org.fit.layout.impl.DefaultTag;
 import org.fit.layout.model.Area;
-import org.fit.layout.model.Tag;
 
 
 /**
@@ -15,23 +15,15 @@ import org.fit.layout.model.Tag;
  * 
  * @author burgetr
  */
-public class TextTag implements Tag
+public class TextTag extends DefaultTag
 {
-    private String value;
     private Tagger source;
-    private int level;
     
     public TextTag(String value, Tagger source)
     {
-        this.value = value;
+        super(value);
         this.source = source;
-        this.level = 0;
-    }
-
-    @Override
-    public String getValue()
-    {
-        return value;
+        setType("FitLayout.TextTag");
     }
 
     public Tagger getSource()
@@ -39,43 +31,6 @@ public class TextTag implements Tag
         return source;
     }
 
-    @Override
-    public int getLevel()
-    {
-        return level;
-    }
-
-    public void setLevel(int level)
-    {
-        this.level = level;
-    }
-
-    @Override
-    public String getType()
-    {
-        return "FitLayout.TextTag";
-    }
-
-    @Override
-    public String toString()
-    {
-        return value;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return value.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        return value.equals(obj.toString());
-    }
-    
     public boolean allowsJoining()
     {
         if (source != null)
