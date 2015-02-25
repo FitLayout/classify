@@ -3,25 +3,34 @@
  *
  * Created on 6.5.2011, 14:48:51 by burgetr
  */
-package org.fit.layout.classify;
+package org.fit.layout.classify.articles;
 
 import java.awt.Color;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.fit.layout.classify.BackgroundColorAnalyzer;
+import org.fit.layout.classify.ColorAnalyzer;
+import org.fit.layout.classify.FeatureExtractor;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Box;
 import org.fit.layout.model.Rectangular;
 import org.fit.layout.model.Tag;
 
+import weka.core.DenseInstance;
+import weka.core.Instance;
+import weka.core.Instances;
+
 
 /**
- * This class provides the methods for obtaining the values of various vertical features from the area tree.
+ * A feature extractor for generic article processing.
  * 
  * @author burgetr
  */
-public class FeatureAnalyzer
+public class ArticleFeatureExtractor implements FeatureExtractor
 {
     /** Minimal difference in the markedness that should be interpreted as a difference between the meaning of the areas. */
     public static final double MIN_MARKEDNESS_DIFFERENCE = 0.5; //0.5 is the difference between the whole area in italics and not in italics
@@ -48,18 +57,61 @@ public class FeatureAnalyzer
     private ColorAnalyzer ca;
     private BackgroundColorAnalyzer bca;
     
-    public FeatureAnalyzer(Area root)
+    public ArticleFeatureExtractor()
     {
         weights = DEFAULT_WEIGHTS;
-        setTree(root);
     }
     
+    @Override
     public void setTree(Area rootNode)
     {
         root = rootNode;
         avgfont = root.getFontSize();
         ca = new ColorAnalyzer(root);
         bca = new BackgroundColorAnalyzer(root);
+    }
+    
+    @Override
+    public Instance getAreaFeatures(Area node, Instances dataset)
+    {
+        FeatureVector f = getFeatureVector(node);
+        
+        Instance inst = new DenseInstance(30);
+        inst.setDataset(dataset);
+        int i = 0;
+        inst.setValue(i++, 0.0); //id
+        inst.setValue(i++, 0.0); //class
+        inst.setValue(i++, f.getFontSize() * 100);
+        inst.setValue(i++, f.getWeight());
+        inst.setValue(i++, f.getStyle());
+        inst.setValue(i++, f.isReplaced()?1:0);
+        inst.setValue(i++, f.getAabove());
+        inst.setValue(i++, f.getAbelow());
+        inst.setValue(i++, f.getAleft());
+        inst.setValue(i++, f.getAright());
+        inst.setValue(i++, f.getNlines());
+        inst.setValue(i++, 1); //TODO count columns
+        inst.setValue(i++, f.getDepth());
+        inst.setValue(i++, f.getTlength());
+        inst.setValue(i++, f.getPdigits());
+        inst.setValue(i++, f.getPlower());
+        inst.setValue(i++, f.getPupper());
+        inst.setValue(i++, f.getPspaces());
+        inst.setValue(i++, f.getPpunct());
+        inst.setValue(i++, f.getRelx());
+        inst.setValue(i++, f.getRely());
+        inst.setValue(i++, f.getTlum());
+        inst.setValue(i++, f.getBglum());
+        inst.setValue(i++, f.getContrast());
+        inst.setValue(i++, f.getMarkedness());
+        inst.setValue(i++, f.getCperc());
+        /*Set<Tag> tags = getAllTags(node);
+        inst.setValue(i++, tags.contains(tDate.getTag())?"true":"false");
+        inst.setValue(i++, tags.contains(tTime.getTag())?"true":"false");
+        inst.setValue(i++, tags.contains(tPersons.getTag())?"true":"false");
+        inst.setValue(i++, tags.contains(tTitle.getTag())?"true":"false");*/
+        
+        return inst;
     }
     
     public void setWeights(double[] weights)
@@ -71,6 +123,37 @@ public class FeatureAnalyzer
     {
         return weights;
     }
+    
+    /**
+     * Computes the markedness of the area. The markedness generally describes the visual importance of the area based on different criteria.
+     * @return the computed expressiveness
+     */
+    public double getMarkedness(Area node)
+    {
+        double fsz = node.getFontSize() / avgfont; //use relative font size, 0 is the normal font
+        double fwt = node.getFontWeight();
+        double fst = node.getFontStyle();
+        double ind = getIndentation(node);
+        double cen = isCentered(node) ? 1.0 : 0.0;
+        double contrast = getContrast(node);
+        double cp = 1.0 - ca.getColorPercentage(node);
+        double bcp = bca.getColorPercentage(node);
+        bcp = (bcp < 0.0) ? 0.0 : (1.0 - bcp);
+        
+        //weighting
+        double exp = weights[WFSZ] * fsz 
+                      + weights[WFWT] * fwt 
+                      + weights[WFST] * fst 
+                      + weights[WIND] * ind
+                      + weights[WCON] * contrast
+                      + weights[WCEN] * cen
+                      + weights[WCP] * cp
+                      + weights[WBCP] * bcp;
+        
+        return exp;
+    }
+    
+    //========================================================================================================
     
     public FeatureVector getFeatureVector(Area node)
     {
@@ -109,37 +192,6 @@ public class FeatureAnalyzer
         //TODO ostatni vlastnosti obdobne
         return ret;
     }
-    
-    /**
-     * Computes the markedness of the area. The markedness generally describes the visual importance of the area based on different criteria.
-     * @return the computed expressiveness
-     */
-    public double getMarkedness(Area node)
-    {
-        double fsz = node.getFontSize() / avgfont; //use relative font size, 0 is the normal font
-        double fwt = node.getFontWeight();
-        double fst = node.getFontStyle();
-        double ind = getIndentation(node);
-        double cen = isCentered(node) ? 1.0 : 0.0;
-        double contrast = getContrast(node);
-        double cp = 1.0 - ca.getColorPercentage(node);
-        double bcp = bca.getColorPercentage(node);
-        bcp = (bcp < 0.0) ? 0.0 : (1.0 - bcp);
-        
-        //weighting
-        double exp = weights[WFSZ] * fsz 
-                      + weights[WFWT] * fwt 
-                      + weights[WFST] * fst 
-                      + weights[WIND] * ind
-                      + weights[WCON] * contrast
-                      + weights[WCEN] * cen
-                      + weights[WCP] * cp
-                      + weights[WBCP] * bcp;
-        
-        return exp;
-    }
-    
-    //========================================================================================================
     
     /**
      * Checks whether the area is horizontally centered within its parent area
@@ -400,7 +452,7 @@ public class FeatureAnalyzer
     {
         Color bg = a.getEffectiveBackgroundColor();
         if (bg != null)
-            return FeatureAnalyzer.colorLuminosity(bg);
+            return ArticleFeatureExtractor.colorLuminosity(bg);
         else
             return 0;
     }
@@ -489,6 +541,18 @@ public class FeatureAnalyzer
             }
         }
         return lines;
+    }
+    
+    /**
+     * Obtains all the tags assigned to this area and its child areas (not all descendant areas).
+     * @return a set of tags
+     */
+    protected Set<Tag> getAllTags(Area area)
+    {
+        Set<Tag> ret = new HashSet<Tag>(area.getTags().keySet());
+        for (int i = 0; i < area.getChildCount(); i++)
+            ret.addAll(area.getChildArea(i).getTags().keySet());
+        return ret;
     }
     
     //========================================================================================================

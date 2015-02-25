@@ -5,9 +5,10 @@
  */
 package org.fit.layout.classify.op;
 
-import org.fit.layout.classify.FeatureAnalyzer;
+import org.fit.layout.classify.FeatureExtractor;
 import org.fit.layout.classify.VisualClassifier;
 import org.fit.layout.classify.VisualTag;
+import org.fit.layout.classify.articles.ArticleFeatureExtractor;
 import org.fit.layout.impl.BaseOperator;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.AreaTree;
@@ -26,12 +27,13 @@ public class VisualClassificationOperator extends BaseOperator
     private String trainFile;
     private int classIndex;
     
-    private FeatureAnalyzer features;
+    private FeatureExtractor features;
     private VisualClassifier vcls;
     
 
     public VisualClassificationOperator()
     {
+        features = new ArticleFeatureExtractor();
     }
     
     public VisualClassificationOperator(String trainFile, int classIndex)
@@ -90,7 +92,7 @@ public class VisualClassificationOperator extends BaseOperator
         this.classIndex = classIndex;
     }
 
-    public FeatureAnalyzer getFeatures()
+    public FeatureExtractor getFeatures()
     {
         return features;
     }
@@ -112,7 +114,7 @@ public class VisualClassificationOperator extends BaseOperator
     public void apply(AreaTree atree, Area root)
     {
         //visual features
-        features = new FeatureAnalyzer(root);
+        features.setTree(root);
         //create and train classifier
         vcls = new VisualClassifier(trainFile, classIndex);
         vcls.classifyTree(root, features);

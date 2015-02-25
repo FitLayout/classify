@@ -3,7 +3,7 @@
  *
  * Created on 6.5.2011, 14:54:37 by burgetr
  */
-package org.fit.layout.classify;
+package org.fit.layout.classify.articles;
 
 /**
  * @author burgetr

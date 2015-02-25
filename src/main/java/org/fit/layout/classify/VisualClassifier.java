@@ -7,19 +7,11 @@ package org.fit.layout.classify;
 
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
-import org.fit.layout.classify.taggers.DateTagger;
-import org.fit.layout.classify.taggers.PersonsTagger;
-import org.fit.layout.classify.taggers.TimeTagger;
-import org.fit.layout.classify.taggers.TitleTagger;
 import org.fit.layout.model.Area;
-import org.fit.layout.model.Tag;
 
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.meta.FilteredClassifier;
-import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
@@ -37,13 +29,8 @@ public class VisualClassifier
 	private Instances testset;
 	private HashMap<Area, Instance> mapping; //mapping testing instances to area tree nodes
 	private Area testRoot;
-	private FeatureAnalyzer features;
+	private FeatureExtractor features;
 	
-	private Tagger tTime = new TimeTagger();
-	private Tagger tDate = new DateTagger();
-	private Tagger tPersons = new PersonsTagger(1);
-	private Tagger tTitle = new TitleTagger();
-
 	/**
 	 * Creates the classifier and trains it with the given training ARFF file.
 	 *  
@@ -60,7 +47,7 @@ public class VisualClassifier
 	 * 
 	 * @param root the root node of the area tree
 	 */
-	public void classifyTree(Area root, FeatureAnalyzer features)
+	public void classifyTree(Area root, FeatureExtractor features)
 	{
 	    if (classifier != null)
 	    {
@@ -158,68 +145,13 @@ public class VisualClassifier
 	private void recursivelyExtractAreaData(Area root)
 	{
 	    //describe the area and add to the testing set
-	    Instance data = computeAreaFeatures(root, testset);
+	    Instance data = features.getAreaFeatures(root, testset);
 	    testset.add(data);
 	    //store the mapping
 	    mapping.put(root, data);
 	    //repeat recursively for subareas
 	    for (int i = 0; i < root.getChildCount(); i++)
 	        recursivelyExtractAreaData(root.getChildArea(i));
-	}
-
-    /**
-     * Obtains all the tags assigned to this area and its child areas (not all descendant areas).
-     * @return a set of tags
-     */
-    protected Set<Tag> getAllTags(Area area)
-    {
-        Set<Tag> ret = new HashSet<Tag>(area.getTags().keySet());
-        for (int i = 0; i < area.getChildCount(); i++)
-            ret.addAll(area.getChildArea(i).getTags().keySet());
-        return ret;
-    }
-    
-	
-	private Instance computeAreaFeatures(Area node, Instances dataset)
-	{
-	    FeatureVector f = features.getFeatureVector(node);
-	    
-	    Instance inst = new DenseInstance(30);
-        inst.setDataset(testset);
-	    int i = 0;
-	    inst.setValue(i++, 0.0); //id
-	    inst.setValue(i++, 0.0); //class
-	    inst.setValue(i++, f.getFontSize() * 100);
-	    inst.setValue(i++, f.getWeight());
-        inst.setValue(i++, f.getStyle());
-        inst.setValue(i++, f.isReplaced()?1:0);
-        inst.setValue(i++, f.getAabove());
-        inst.setValue(i++, f.getAbelow());
-        inst.setValue(i++, f.getAleft());
-        inst.setValue(i++, f.getAright());
-        inst.setValue(i++, f.getNlines());
-        inst.setValue(i++, 1); //TODO count columns
-        inst.setValue(i++, f.getDepth());
-        inst.setValue(i++, f.getTlength());
-        inst.setValue(i++, f.getPdigits());
-        inst.setValue(i++, f.getPlower());
-        inst.setValue(i++, f.getPupper());
-        inst.setValue(i++, f.getPspaces());
-        inst.setValue(i++, f.getPpunct());
-        inst.setValue(i++, f.getRelx());
-        inst.setValue(i++, f.getRely());
-        inst.setValue(i++, f.getTlum());
-        inst.setValue(i++, f.getBglum());
-        inst.setValue(i++, f.getContrast());
-        inst.setValue(i++, f.getMarkedness());
-        inst.setValue(i++, f.getCperc());
-        Set<Tag> tags = getAllTags(node);
-        inst.setValue(i++, tags.contains(tDate.getTag())?"true":"false");
-        inst.setValue(i++, tags.contains(tTime.getTag())?"true":"false");
-        inst.setValue(i++, tags.contains(tPersons.getTag())?"true":"false");
-        inst.setValue(i++, tags.contains(tTitle.getTag())?"true":"false");
-	    
-	    return inst;
 	}
 	
 }
