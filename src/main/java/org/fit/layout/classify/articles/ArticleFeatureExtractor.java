@@ -14,11 +14,13 @@ import java.util.Set;
 
 import org.fit.layout.classify.BackgroundColorAnalyzer;
 import org.fit.layout.classify.ColorAnalyzer;
-import org.fit.layout.classify.FeatureExtractor;
+import org.fit.layout.classify.DefaultFeatureExtractor;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Box;
 import org.fit.layout.model.Rectangular;
 import org.fit.layout.model.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -30,8 +32,10 @@ import weka.core.Instances;
  * 
  * @author burgetr
  */
-public class ArticleFeatureExtractor implements FeatureExtractor
+public class ArticleFeatureExtractor extends DefaultFeatureExtractor
 {
+    private static Logger log = LoggerFactory.getLogger(ArticleFeatureExtractor.class);
+    
     /** Minimal difference in the markedness that should be interpreted as a difference between the meaning of the areas. */
     public static final double MIN_MARKEDNESS_DIFFERENCE = 0.5; //0.5 is the difference between the whole area in italics and not in italics
     
@@ -71,6 +75,17 @@ public class ArticleFeatureExtractor implements FeatureExtractor
         bca = new BackgroundColorAnalyzer(root);
     }
     
+    @Override
+    public Instances createEmptyDataset()
+    {
+        try {
+            return loadArffDatasetResource("articles_header.arff");
+        } catch (Exception e) {
+            log.error("Couldn't create empty dataset: " + e.getMessage());
+            return null;
+        }
+    }
+
     @Override
     public Instance getAreaFeatures(Area node, Instances dataset)
     {

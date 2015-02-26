@@ -1,0 +1,32 @@
+@RELATION page
+@ATTRIBUTE id NUMERIC
+@ATTRIBUTE class {none,h1,h2,subtitle,perex,paragraph,author,date,authordate}
+@ATTRIBUTE fontsize NUMERIC
+@ATTRIBUTE weight NUMERIC 
+@ATTRIBUTE style NUMERIC
+@ATTRIBUTE replaced NUMERIC
+@ATTRIBUTE aabove NUMERIC 
+@ATTRIBUTE abelow NUMERIC 
+@ATTRIBUTE aleft NUMERIC 
+@ATTRIBUTE aright NUMERIC 
+@ATTRIBUTE nlines NUMERIC
+@ATTRIBUTE ncols NUMERIC
+@ATTRIBUTE depth NUMERIC
+@ATTRIBUTE tlength NUMERIC 
+@ATTRIBUTE pdigits NUMERIC 
+@ATTRIBUTE plower NUMERIC 
+@ATTRIBUTE pupper NUMERIC 
+@ATTRIBUTE pspaces NUMERIC 
+@ATTRIBUTE ppunct NUMERIC 
+@ATTRIBUTE relx NUMERIC 
+@ATTRIBUTE rely NUMERIC 
+@ATTRIBUTE tlum NUMERIC
+@ATTRIBUTE bglum NUMERIC
+@ATTRIBUTE contrast NUMERIC
+@ATTRIBUTE markedness NUMERIC
+@ATTRIBUTE cperc NUMERIC
+@ATTRIBUTE tdate {true,false}
+@ATTRIBUTE ttime {true,false}
+@ATTRIBUTE tpersons {true,false}
+@ATTRIBUTE ttitle {true,false}
+@data

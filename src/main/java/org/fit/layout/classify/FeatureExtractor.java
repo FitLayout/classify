@@ -32,4 +32,11 @@ public interface FeatureExtractor
      */
     public Instance getAreaFeatures(Area area, Instances dataset);
     
+    
+    /**
+     * Creates an empty data set containing the header appropriate to this extractor.
+     * @return an empty data set
+     */
+    public Instances createEmptyDataset();
+    
 }
