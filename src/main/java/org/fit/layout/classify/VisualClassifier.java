@@ -111,9 +111,9 @@ public class VisualClassifier
             //filter = new weka.filters.unsupervised.attribute.Normalize();
             //filter.setInputFormat(tdata);
             
-            filter = new weka.filters.unsupervised.attribute.Remove();
-            ((weka.filters.unsupervised.attribute.Remove) filter).setAttributeIndices("1,25"); //do not include ID and MARKEDNESS
-            filter.setInputFormat(tdata);
+            //filter = new weka.filters.unsupervised.attribute.Remove();
+            //((weka.filters.unsupervised.attribute.Remove) filter).setAttributeIndices("1,25"); //do not include ID and MARKEDNESS
+            //filter.setInputFormat(tdata);
             //trainset = Filter.useFilter(tdata, remove);
             trainset = tdata;
             
@@ -126,10 +126,12 @@ public class VisualClassifier
             cls.setOptions(weka.core.Utils.splitOptions("-C 0.25 -M 2"));
             //AbstractClassifier cls = new weka.classifiers.functions.LibSVM();
             //cls.setOptions(weka.core.Utils.splitOptions("-S 0 -K 2 -D 3 -G 0.5 -R 0.0 -N 0.5 -M 40.0 -C 128.0 -E 0.0010 -P 0.1"));
-            FilteredClassifier fc = new FilteredClassifier();
-            fc.setFilter(filter);
-            fc.setClassifier(cls);
-            classifier = fc;
+            
+            //FilteredClassifier fc = new FilteredClassifier();
+            //fc.setFilter(filter);
+            //fc.setClassifier(cls);
+            
+            classifier = cls;
             classifier.buildClassifier(trainset);
             
             if (cls instanceof weka.classifiers.trees.J48)

@@ -97,6 +97,11 @@ public class VisualClassificationOperator extends BaseOperator
         return features;
     }
 
+    public void setFeatures(FeatureExtractor features)
+    {
+        this.features = features;
+    }
+
     public VisualClassifier getVisualClassifier()
     {
         return vcls;
