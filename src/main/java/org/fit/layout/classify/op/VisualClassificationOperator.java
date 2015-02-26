@@ -120,6 +120,7 @@ public class VisualClassificationOperator extends BaseOperator
     {
         //visual features
         features.setTree(root);
+        System.out.println("SETTING ROOT");
         //create and train classifier
         vcls = new VisualClassifier(trainFile, classIndex);
         vcls.classifyTree(root, features);
