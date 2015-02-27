@@ -76,6 +76,11 @@ public class InstanceExtractor
         }
     }
     
+    public int count()
+    {
+        return data.numInstances();
+    }
+    
     //===================================================================================
     
     protected void recursiveExtractInstances(Area root, Instances dest)

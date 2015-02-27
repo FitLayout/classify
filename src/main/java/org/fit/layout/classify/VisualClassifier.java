@@ -128,10 +128,10 @@ public class VisualClassifier
             //build the classifier
             System.err.print("build...");
             //AbstractClassifier cls = new weka.classifiers.bayes.NaiveBayes();
-            AbstractClassifier cls = new weka.classifiers.functions.MultilayerPerceptron();
-            cls.setOptions(weka.core.Utils.splitOptions("-L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a"));
-            //AbstractClassifier cls = new weka.classifiers.trees.J48();
-            //cls.setOptions(weka.core.Utils.splitOptions("-C 0.25 -M 2"));
+            //AbstractClassifier cls = new weka.classifiers.functions.MultilayerPerceptron();
+            //cls.setOptions(weka.core.Utils.splitOptions("-L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a"));
+            AbstractClassifier cls = new weka.classifiers.trees.J48();
+            cls.setOptions(weka.core.Utils.splitOptions("-C 0.25 -M 2"));
             //AbstractClassifier cls = new weka.classifiers.functions.LibSVM();
             //cls.setOptions(weka.core.Utils.splitOptions("-S 0 -K 2 -D 3 -G 0.5 -R 0.0 -N 0.5 -M 40.0 -C 128.0 -E 0.0010 -P 0.1"));
             
