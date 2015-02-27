@@ -5,6 +5,7 @@
  */
 package org.fit.layout.classify;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 
@@ -34,7 +35,8 @@ public class VisualClassifier
 	/**
 	 * Creates the classifier and trains it with the given training ARFF file.
 	 *  
-	 * @param trainfile path to the training ARFF file
+	 * @param trainfile path to the training ARFF file. Use the {@code res:} prefix for denoting
+	 * classpath resources (e.g. {@code res:train.arff}).
 	 * @param classindex index of the class attribute in the ARFF file
 	 */
 	public VisualClassifier(String trainfile, int classindex)
@@ -99,15 +101,21 @@ public class VisualClassifier
 	{
         try
         {
+            //analyze the path
+            InputStream is;
+            if (resource.startsWith("res:"))
+                is = ClassLoader.getSystemResourceAsStream(resource.substring(4));
+            else
+                is = new FileInputStream(resource);
+            
             //open the data file
-            InputStream is = ClassLoader.getSystemResourceAsStream(resource);
             DataSource source = new DataSource(is);
             Instances tdata = source.getDataSet();
             tdata.setClassIndex(classindex);
             
             //initialize the filter
             System.err.print("filter...");
-            //filter = new weka.filters.unsupervised.attribute.Standardize();
+            filter = new weka.filters.unsupervised.attribute.Standardize();
             //filter = new weka.filters.unsupervised.attribute.Normalize();
             //filter.setInputFormat(tdata);
             
@@ -120,22 +128,24 @@ public class VisualClassifier
             //build the classifier
             System.err.print("build...");
             //AbstractClassifier cls = new weka.classifiers.bayes.NaiveBayes();
-            //AbstractClassifier cls = new weka.classifiers.functions.MultilayerPerceptron();
-            //cls.setOptions(weka.core.Utils.splitOptions("-L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a"));
-            AbstractClassifier cls = new weka.classifiers.trees.J48();
-            cls.setOptions(weka.core.Utils.splitOptions("-C 0.25 -M 2"));
+            AbstractClassifier cls = new weka.classifiers.functions.MultilayerPerceptron();
+            cls.setOptions(weka.core.Utils.splitOptions("-L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a"));
+            //AbstractClassifier cls = new weka.classifiers.trees.J48();
+            //cls.setOptions(weka.core.Utils.splitOptions("-C 0.25 -M 2"));
             //AbstractClassifier cls = new weka.classifiers.functions.LibSVM();
             //cls.setOptions(weka.core.Utils.splitOptions("-S 0 -K 2 -D 3 -G 0.5 -R 0.0 -N 0.5 -M 40.0 -C 128.0 -E 0.0010 -P 0.1"));
             
-            //FilteredClassifier fc = new FilteredClassifier();
-            //fc.setFilter(filter);
-            //fc.setClassifier(cls);
+            FilteredClassifier fc = new FilteredClassifier();
+            fc.setFilter(filter);
+            fc.setClassifier(cls);
             
-            classifier = cls;
+            classifier = fc;
             classifier.buildClassifier(trainset);
             
             if (cls instanceof weka.classifiers.trees.J48)
                 System.out.println(((weka.classifiers.trees.J48) cls).toString());
+            
+            is.close();
             
         } catch (Exception e) {
             classifier = null;
