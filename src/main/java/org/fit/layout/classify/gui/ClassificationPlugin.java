@@ -166,8 +166,14 @@ public class ClassificationPlugin implements BrowserPlugin, AreaSelectionListene
     @Override
     public void areaSelected(Area area)
     {
-        Vector<Vector <String>> fvals = new Vector<Vector <String>>();
+        //ensure that some tree root is set in the feature extractor
+        FeatureExtractor fe = getFeatureExtractor();
+        if (fe.getTreeRoot() == null)
+            fe.setTree(browser.getAreaTree().getRoot());
+        //classify the instance
         Instance data = getFeatureExtractor().getAreaFeatures(area, dataset);
+        //display the result
+        Vector<Vector <String>> fvals = new Vector<Vector <String>>();
         for (int i = 0; i < data.numAttributes(); i++)
         {
             String name = data.attribute(i).name();
