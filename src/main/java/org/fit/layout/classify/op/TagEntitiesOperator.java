@@ -8,6 +8,7 @@ package org.fit.layout.classify.op;
 import org.fit.layout.classify.Tagger;
 import org.fit.layout.classify.TreeTagger;
 import org.fit.layout.classify.taggers.DateTagger;
+import org.fit.layout.classify.taggers.PagesTagger;
 import org.fit.layout.classify.taggers.PersonsTagger;
 import org.fit.layout.classify.taggers.TimeTagger;
 import org.fit.layout.classify.taggers.TitleTagger;
@@ -76,12 +77,14 @@ public class TagEntitiesOperator extends BaseOperator
         Tagger tDate = new DateTagger();
         Tagger tPersons = new PersonsTagger(1);
         Tagger tTitle = new TitleTagger();
+        Tagger tPages = new PagesTagger();
         
         tagger = new TreeTagger(root);
         tagger.addTagger(tTime);
         tagger.addTagger(tDate);
         tagger.addTagger(tPersons);
         tagger.addTagger(tTitle);
+        tagger.addTagger(tPages);
         tagger.tagTree();
     }
 
