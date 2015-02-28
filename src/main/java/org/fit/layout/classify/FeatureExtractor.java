@@ -25,6 +25,12 @@ public interface FeatureExtractor
     public void setTree(Area rootNode);
     
     /**
+     * Obtains the current tree root.
+     * @return the current tree root area or {@code null} when the tree was not set before.
+     */
+    public Area getTreeRoot();
+    
+    /**
      * Creates a classification data instance from the given area.
      * @param area the area whose features should be computed
      * @param dataset the data set the created instance should belong to

@@ -76,6 +76,12 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
     }
     
     @Override
+    public Area getTreeRoot()
+    {
+        return root;
+    }
+
+    @Override
     public Instances createEmptyDataset()
     {
         try {
