@@ -28,7 +28,7 @@ public class LocationsTagger implements Tagger
     
     /**
      * Construct a new tagger.
-     * @param mincnt the minimal count of the personal names detected in the area necessary for tagging this area.
+     * @param mincnt the minimal count of the location names detected in the area necessary for tagging this area.
      */
     public LocationsTagger(int mincnt)
     {
