@@ -9,21 +9,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Statistical analyzer of styles.
+ * Statistical analyzer of style occurences. Any implementation of the style may be provided,
+ * e.g. the default {@code NodeStyle}. The style implementation must correctly implement the
+ * {@code equals()} and {@code hashCode()} methods. 
  * 
  * @author burgetr
  */
-public class StyleCounter
+public class StyleCounter<T>
 {
-    private Map<NodeStyle, Integer> styles;
+    private Map<T, Integer> styles;
     
     
     public StyleCounter()
     {
-        styles = new HashMap<NodeStyle, Integer>();
+        styles = new HashMap<T, Integer>();
     }
     
-    public void add(NodeStyle style)
+    public void add(T style)
     {
         Integer cnt = styles.get(style);
         if (cnt == null)
@@ -32,17 +34,17 @@ public class StyleCounter
             styles.put(style, cnt+1);
     }
     
-    public int getCount(NodeStyle style)
+    public int getCount(T style)
     {
         Integer cnt = styles.get(style);
         return cnt == null ? 0 : cnt;
     }
     
-    public NodeStyle getMostFrequent()
+    public T getMostFrequent()
     {
-        NodeStyle ret = null;
+        T ret = null;
         int freq = 0;
-        for (Map.Entry<NodeStyle, Integer> entry : styles.entrySet())
+        for (Map.Entry<T, Integer> entry : styles.entrySet())
         {
             if (entry.getValue() > freq)
             {
