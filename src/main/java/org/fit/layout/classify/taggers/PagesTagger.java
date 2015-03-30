@@ -20,7 +20,7 @@ import org.fit.layout.model.Tag;
  */
 public class PagesTagger implements Tagger
 {
-    protected Pattern pgexpr = Pattern.compile("[1-9][0-9]*\\s*\\p{Pd}\\s*[1-9][0-9]*");
+    protected Pattern pgexpr = Pattern.compile("[1-9][0-9]*(\\s*\\p{Pd}\\s*[1-9][0-9]*)?");
     
     public TextTag getTag()
     {
