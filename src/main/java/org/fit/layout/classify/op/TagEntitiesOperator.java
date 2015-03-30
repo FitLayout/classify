@@ -5,6 +5,9 @@
  */
 package org.fit.layout.classify.op;
 
+import java.util.List;
+import java.util.Vector;
+
 import org.fit.layout.classify.Tagger;
 import org.fit.layout.classify.TreeTagger;
 import org.fit.layout.classify.taggers.DateTagger;
@@ -26,11 +29,13 @@ public class TagEntitiesOperator extends BaseOperator
     protected final String[] paramNames = {};
     protected final ValueType[] paramTypes = {};
     
-    protected TreeTagger tagger;
-    
+    private TreeTagger tagger;
+    private List<Tagger> taggers;
 
+    
     public TagEntitiesOperator()
     {
+        initTaggers();
     }
     
     @Override
@@ -63,6 +68,33 @@ public class TagEntitiesOperator extends BaseOperator
         return paramTypes;
     }
 
+    /**
+     * Registers a new tagger that should be used by this operator.
+     * @param tagger the tagger instance to be added
+     */
+    public void addTagger(Tagger tagger)
+    {
+        taggers.add(tagger);
+    }
+    
+    protected void initTaggers()
+    {
+        Tagger tTime = new TimeTagger();
+        Tagger tDate = new DateTagger();
+        Tagger tPersons = new PersonsTagger(1);
+        Tagger tLoc = new LocationsTagger(1);
+        Tagger tTitle = new TitleTagger();
+        Tagger tPages = new PagesTagger();
+        
+        taggers = new Vector<Tagger>();
+        taggers.add(tTime);
+        taggers.add(tDate);
+        taggers.add(tPersons);
+        taggers.add(tLoc);
+        taggers.add(tTitle);
+        taggers.add(tPages);
+    }
+    
     //==============================================================================
 
     @Override
@@ -74,20 +106,9 @@ public class TagEntitiesOperator extends BaseOperator
     @Override
     public void apply(AreaTree atree, Area root)
     {
-        Tagger tTime = new TimeTagger();
-        Tagger tDate = new DateTagger();
-        Tagger tPersons = new PersonsTagger(1);
-        Tagger tLoc = new LocationsTagger(1);
-        Tagger tTitle = new TitleTagger();
-        Tagger tPages = new PagesTagger();
-        
         tagger = new TreeTagger(root);
-        tagger.addTagger(tTime);
-        tagger.addTagger(tDate);
-        tagger.addTagger(tPersons);
-        tagger.addTagger(tLoc);
-        tagger.addTagger(tTitle);
-        tagger.addTagger(tPages);
+        for (Tagger t : taggers)
+            tagger.addTagger(t);
         tagger.tagTree();
     }
 
