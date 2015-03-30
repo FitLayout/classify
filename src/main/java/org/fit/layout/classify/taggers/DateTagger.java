@@ -54,6 +54,45 @@ public class DateTagger implements Tagger
         dw.add("october");
         dw.add("novebrer");
         dw.add("december");
+        
+        dw.add("januar");
+        dw.add("februar");
+        dw.add("märz");
+        dw.add("april");
+        dw.add("mai");
+        dw.add("juni");
+        dw.add("juli");
+        dw.add("august");
+        dw.add("september");
+        dw.add("oktober");
+        dw.add("november");
+        dw.add("dezember");
+        
+        dw.add("janvier");
+        dw.add("février");
+        dw.add("mars");
+        dw.add("avril");
+        dw.add("mai");
+        dw.add("juin");
+        dw.add("juillet");
+        dw.add("août");
+        dw.add("septembre");
+        dw.add("octobre");
+        dw.add("novembre ");
+        dw.add("décembre ");
+        
+        dw.add("gennaio");
+        dw.add("febbraio");
+        dw.add("marzo");
+        dw.add("aprile");
+        dw.add("maggio");
+        dw.add("giugno");
+        dw.add("luglio");
+        dw.add("agosto");
+        dw.add("settembre");
+        dw.add("ottobre");
+        dw.add("novembre");
+        dw.add("dicembre");
     }
     
     public TextTag getTag()
