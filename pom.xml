@@ -42,6 +42,11 @@
 			<artifactId>stanford-corenlp</artifactId>
 			<version>3.3.1</version>
 		</dependency>
+		<dependency>
+		    <groupId>com.joestelmach</groupId>
+		    <artifactId>natty</artifactId>
+		    <version>0.10.1</version>
+		</dependency>		
 	</dependencies>
 
 </project>

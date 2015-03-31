@@ -5,7 +5,9 @@
  */
 package org.fit.layout.classify.taggers;
 
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -174,6 +176,20 @@ public class DateTagger implements Tagger
                 ret.add(s);
             }
         }
+        return ret;
+    }
+    
+    private List<Date> extractDates(String s)
+    {
+        Vector<Date> ret = new Vector<Date>();
+        
+        Vector<String> srcdates = extract(s);
+        for (String sdate : srcdates)
+        {
+            String[] words = sdate.split("\\s+");
+            //TODO extract
+        }
+        
         return ret;
     }
     
