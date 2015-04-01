@@ -6,9 +6,9 @@
 package org.fit.layout.classify.taggers;
 
 import java.util.Date;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,83 +18,89 @@ import org.fit.layout.classify.Tagger;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
 
+import com.joestelmach.natty.DateGroup;
+import com.joestelmach.natty.Parser;
+
 /**
  * @author burgetr
  *
  */
 public class DateTagger implements Tagger
 {
+    private static Map<String, String> dw;
+    static {
+        dw = new HashMap<String, String>();
+        dw.put("jan", "january");
+        dw.put("feb", "february");
+        dw.put("mar", "march");
+        dw.put("apr", "april");
+        dw.put("may", "may");
+        dw.put("jun", "june");
+        dw.put("jul", "july");
+        dw.put("aug", "august");
+        dw.put("sep", "september");
+        dw.put("oct", "october");
+        dw.put("nov", "november");
+        dw.put("dec", "december");
+        dw.put("january", "january");
+        dw.put("february", "february");
+        dw.put("march", "march");
+        dw.put("april", "april");
+        dw.put("june", "june");
+        dw.put("july", "july");
+        dw.put("august", "august");
+        dw.put("september", "september");
+        dw.put("october", "october");
+        dw.put("novebrer", "novebrer");
+        dw.put("december", "december");
+        
+        dw.put("januar", "january");
+        dw.put("februar", "february");
+        dw.put("märz", "mrch");
+        dw.put("april", "april");
+        dw.put("mai", "may");
+        dw.put("juni", "june");
+        dw.put("juli", "july");
+        dw.put("august", "august");
+        dw.put("september", "september");
+        dw.put("oktober", "october");
+        dw.put("november", "november");
+        dw.put("dezember", "december");
+        
+        dw.put("janvier", "january");
+        dw.put("février", "february");
+        dw.put("mars", "marcj");
+        dw.put("avril", "april");
+        dw.put("mai", "may");
+        dw.put("juin", "june");
+        dw.put("juillet", "july");
+        dw.put("août", "august");
+        dw.put("septembre", "september");
+        dw.put("octobre", "october");
+        dw.put("novembre", "november");
+        dw.put("décembre", "december");
+        
+        dw.put("gennaio", "january");
+        dw.put("febbraio", "february");
+        dw.put("marzo", "march");
+        dw.put("aprile", "april");
+        dw.put("maggio", "may");
+        dw.put("giugno", "june");
+        dw.put("luglio", "july");
+        dw.put("agosto", "august");
+        dw.put("settembre", "september");
+        dw.put("ottobre", "october");
+        dw.put("novembre", "november");
+        dw.put("dicembre", "december");
+    }
+    
     protected Pattern[] dateexpr = {Pattern.compile("[1-2][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]")};
     
-    private Set<String> dw;
     private int dfirst;
     private int dlast;
 
     public DateTagger()
     {
-        dw = new HashSet<String>(24);
-        dw.add("jan");
-        dw.add("feb");
-        dw.add("mar");
-        dw.add("apr");
-        dw.add("may");
-        dw.add("jun");
-        dw.add("jul");
-        dw.add("aug");
-        dw.add("sep");
-        dw.add("oct");
-        dw.add("nov");
-        dw.add("dec");
-        dw.add("january");
-        dw.add("february");
-        dw.add("march");
-        dw.add("april");
-        dw.add("june");
-        dw.add("july");
-        dw.add("august");
-        dw.add("september");
-        dw.add("october");
-        dw.add("novebrer");
-        dw.add("december");
-        
-        dw.add("januar");
-        dw.add("februar");
-        dw.add("märz");
-        dw.add("april");
-        dw.add("mai");
-        dw.add("juni");
-        dw.add("juli");
-        dw.add("august");
-        dw.add("september");
-        dw.add("oktober");
-        dw.add("november");
-        dw.add("dezember");
-        
-        dw.add("janvier");
-        dw.add("février");
-        dw.add("mars");
-        dw.add("avril");
-        dw.add("mai");
-        dw.add("juin");
-        dw.add("juillet");
-        dw.add("août");
-        dw.add("septembre");
-        dw.add("octobre");
-        dw.add("novembre ");
-        dw.add("décembre ");
-        
-        dw.add("gennaio");
-        dw.add("febbraio");
-        dw.add("marzo");
-        dw.add("aprile");
-        dw.add("maggio");
-        dw.add("giugno");
-        dw.add("luglio");
-        dw.add("agosto");
-        dw.add("settembre");
-        dw.add("ottobre");
-        dw.add("novembre");
-        dw.add("dicembre");
     }
     
     public TextTag getTag()
@@ -179,7 +185,7 @@ public class DateTagger implements Tagger
         return ret;
     }
     
-    private List<Date> extractDates(String s)
+    public List<Date> extractDates(String s)
     {
         Vector<Date> ret = new Vector<Date>();
         
@@ -187,10 +193,70 @@ public class DateTagger implements Tagger
         for (String sdate : srcdates)
         {
             String[] words = sdate.split("\\s+");
-            //TODO extract
+            if (words.length == 1)
+            {
+                ret.add(strToDate(words[0]));
+            }
+            else
+            {
+                String[] sdates = new String[2];
+                sdates[0] = "";
+                sdates[1] = "";
+                for (int round = 0; round < 2; round++)
+                {
+                    short prevtype = -1;
+                    int order = 0;
+                    String toadd = null;
+                    for (int i = 0; i < words.length; i++)
+                    {
+                        short type = getValueType(words[i]);
+                        if (prevtype != -1 && prevtype == type)
+                            order++;
+                        else
+                        {
+                            if (toadd != null)
+                                sdates[round] += " " + toadd;
+                            toadd = null;
+                            order = 0;
+                        }
+                        if (order <= round)
+                        {
+                            toadd = words[i];
+                            if (dw.containsKey(toadd))
+                                toadd = dw.get(toadd);
+                        }
+                        prevtype = type;
+                    }
+                    if (toadd != null)
+                        sdates[round] += " " + toadd;
+                }
+                
+                for (int i = 0; i < 2; i++)
+                {
+                    if (!sdates[i].isEmpty())
+                    {
+                        Date d = strToDate(sdates[i]); 
+                        if (d != null)
+                            ret.add(d);
+                    }
+                }
+            }
         }
         
         return ret;
+    }
+    
+    private Date strToDate(String s)
+    {
+        Parser parser = new Parser();
+        List<DateGroup> groups = parser.parse(s);
+        for(DateGroup group : groups) 
+        {
+          List<Date> dates = group.getDates();
+          if (dates.size() > 0)
+              return dates.get(0);
+        }
+        return null;
     }
     
     //=================================================================================================
@@ -210,7 +276,7 @@ public class DateTagger implements Tagger
         int lastyear = -999;
         for (int i = 0; i < strs.length; i++)
         {
-            if (dw.contains(strs[i]))
+            if (isMonthName(strs[i]))
             {
                 lastdw = i;
                 if (lastdw - lastnum <= tolerance)
@@ -248,7 +314,7 @@ public class DateTagger implements Tagger
         int intpos = -1; //interesting position found (not a simple number)
         for (int i = 0; i < strs.length; i++)
         {
-            if (dw.contains(strs[i]) || isYear(strs[i]))
+            if (isMonthName(strs[i]) || isYear(strs[i]))
                 intpos = i;
             if (intpos == i || isNum(strs[i]))
             {
@@ -286,7 +352,7 @@ public class DateTagger implements Tagger
     {
         try
         {
-            Integer.parseInt(s);
+            Integer.parseInt(stripSuffix(s));
         } catch (NumberFormatException e) {
             return false;
         }
@@ -302,5 +368,57 @@ public class DateTagger implements Tagger
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+    
+    private boolean isMonthNum(String s)
+    {
+        try
+        {
+            int n = Integer.parseInt(stripSuffix(s));
+            return n >= 1 && n <= 12;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    
+    private boolean isMonthName(String s)
+    {
+        return dw.containsKey(s.toLowerCase());
+    }
+    
+    private boolean isDayNum(String s)
+    {
+        try
+        {
+            int n = Integer.parseInt(stripSuffix(s));
+            return n >= 1 && n <= 31;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    
+    private short getValueType(String s)
+    {
+        if (isMonthName(s))
+            return 1;
+        else if (isYear(s))
+            return 2;
+        else if (isMonthNum(s))
+            return 3;
+        else if (isDayNum(s))
+            return 4;
+        else if (isNum(s))
+            return 5;
+        else
+            return 0;
+    }
+    
+    private String stripSuffix(String s)
+    {
+        final String test = s.toLowerCase();
+        if (test.endsWith("st") || test.endsWith("nd") || test.endsWith("rd") || test.endsWith("th"))
+            return s.substring(0, s.length() - 2);
+        else
+            return s;
     }
 }
