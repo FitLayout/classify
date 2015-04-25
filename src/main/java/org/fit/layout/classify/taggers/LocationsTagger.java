@@ -82,8 +82,12 @@ public class LocationsTagger implements Tagger
     public Vector<String> extract(String src)
     {
         Vector<String> ret = new Vector<String>();
-        //TODO implement extraction
-        ret.add(src);
+        List<Triple<String,Integer,Integer>> list = classifier.classifyToCharacterOffsets(src);
+        for (Triple<String,Integer,Integer> t : list)
+        {
+            if (t.first().equals("LOCATION"))
+                ret.add(src.substring(t.second(), t.third()));
+        }
         return ret;
     }
     
