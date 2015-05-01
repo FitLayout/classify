@@ -6,7 +6,9 @@
 package org.fit.layout.classify;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 /**
  * Statistical analyzer of style occurences. Any implementation of the style may be provided,
@@ -51,6 +53,23 @@ public class StyleCounter<T>
                 ret = entry.getKey();
                 freq = entry.getValue();
             }
+        }
+        return ret;
+    }
+    
+    public List<T> getMostFrequentAll()
+    {
+        List<T> ret = new Vector<T>();
+        int maxfreq = 0;
+        for (Map.Entry<T, Integer> entry : styles.entrySet())
+        {
+            if (entry.getValue() > maxfreq)
+                maxfreq = entry.getValue();
+        }
+        for (Map.Entry<T, Integer> entry : styles.entrySet())
+        {
+            if (entry.getValue() == maxfreq)
+                ret.add(entry.getKey());
         }
         return ret;
     }
