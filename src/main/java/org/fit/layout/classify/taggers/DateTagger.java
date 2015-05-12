@@ -56,7 +56,7 @@ public class DateTagger implements Tagger
         
         dw.put("januar", "january");
         dw.put("februar", "february");
-        dw.put("märz", "mrch");
+        dw.put("märz", "march");
         dw.put("april", "april");
         dw.put("mai", "may");
         dw.put("juni", "june");
@@ -69,7 +69,7 @@ public class DateTagger implements Tagger
         
         dw.put("janvier", "january");
         dw.put("février", "february");
-        dw.put("mars", "marcj");
+        dw.put("mars", "march");
         dw.put("avril", "april");
         dw.put("mai", "may");
         dw.put("juin", "june");
