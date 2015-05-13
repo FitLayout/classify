@@ -92,6 +92,19 @@ public class DateTagger implements Tagger
         dw.put("ottobre", "october");
         dw.put("novembre", "november");
         dw.put("dicembre", "december");
+        
+        dw.put("enero", "january");
+        dw.put("febrero", "february");
+        dw.put("marzo", "march");
+        dw.put("abril", "april");
+        dw.put("mayo", "may");
+        dw.put("junio", "june");
+        dw.put("julio", "july");
+        dw.put("agosto", "august");
+        dw.put("septiembre", "september");
+        dw.put("octubre", "october");
+        dw.put("noviembre", "november");
+        dw.put("diciembre", "december");
     }
     
     protected Pattern[] dateexpr = {Pattern.compile("[1-2][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]")};
@@ -170,7 +183,8 @@ public class DateTagger implements Tagger
         //try to compose the individual values
         if (ret.isEmpty())
         {
-            words = src.toLowerCase().split("\\W+");
+            //words = src.toLowerCase().split("\\W+", 0);
+            words = Pattern.compile("\\W+", Pattern.UNICODE_CHARACTER_CLASS).split(src);
             if (findDate(words, 1))
             {
                 String s = "";
@@ -192,7 +206,7 @@ public class DateTagger implements Tagger
         Vector<String> srcdates = extract(s);
         for (String sdate : srcdates)
         {
-            String[] words = sdate.split("\\s+");
+            String[] words = sdate.toLowerCase().split("\\s+");
             if (words.length == 1)
             {
                 ret.add(strToDate(words[0]));
