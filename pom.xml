@@ -5,32 +5,54 @@
 	<!--
 	 -->
 	
-	<groupId>cz.vutbr.fit.layout</groupId>
+	<parent>
+		<groupId>cz.vutbr.fit.layout</groupId>
+		<artifactId>parent</artifactId>
+		<version>0.0.2-SNAPSHOT</version>
+		<relativePath>../parent/pom.xml</relativePath>
+	</parent>
+	
 	<artifactId>layout-classify</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>LayoutClassify</name>
 	
+	<description>
+		An extensible web page segmentation and analysis framework - Classification algorithms.
+	</description>
+	<url>http://www.fit.vutbr.cz/~burgetr/FITLayout/</url>
+
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License 3.0</name>
+			<url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Radek Burget</name>
+			<roles>
+				<role>Main developer &amp; project leader</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<scm>
+		<url>https://github.com/FitLayout/classify</url>
+		<connection>scm:git:git@github.com:FitLayout/classify.git</connection>
+		<developerConnection>scm:git:git@github.com:FitLayout/classify.git</developerConnection>
+		<tag>HEAD</tag>
+    </scm>
+    
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
-		
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
-		</plugins>
-		
 	</build>
 
 	<dependencies>
 		<dependency>
 			<groupId>cz.vutbr.fit.layout</groupId>
 			<artifactId>layout-api</artifactId>
-			<version>0.0.1</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>nz.ac.waikato.cms.weka</groupId>
