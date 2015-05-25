@@ -44,8 +44,8 @@ public class NodeStyle
     }
     
     /**
-     * Computes the style of a logical node.
-     * @param node
+     * Creates a copy of the node style.
+     * @param src the source node
      */
     public NodeStyle(NodeStyle src)
     {

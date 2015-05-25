@@ -57,9 +57,9 @@ public class BackgroundColorAnalyzer
     }
 
     /**
-     * Obtains the average percentage of the total area that has the same background color.
-     * @param color the color to be tested.
-     * @return the percentage (0..1) for background-separated nodes or a negative value for non-separated nodes.
+     * Obtains the average percentage of the total area that has the same background color as the given area.
+     * @param area the area whose background should be compared.
+     * @return the percentage (0..1) for background-separated areas or a negative value for non-separated nodes.
      */
     public double getColorPercentage(Area area)
     {
