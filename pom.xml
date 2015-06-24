@@ -7,12 +7,11 @@
 	<parent>
 		<groupId>cz.vutbr.fit.layout</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.0.2</version>
+		<version>0.0.3-SNAPSHOT</version>
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
 	
 	<artifactId>layout-classify</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
 	
 	<name>LayoutClassify</name>
 	
@@ -53,7 +52,6 @@
 		<dependency>
 			<groupId>cz.vutbr.fit.layout</groupId>
 			<artifactId>layout-api</artifactId>
-			<version>0.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>nz.ac.waikato.cms.weka</groupId>
