@@ -10,21 +10,18 @@ import java.util.Vector;
 
 import org.fit.layout.classify.TextTag;
 import org.fit.layout.classify.Tagger;
-import org.fit.layout.classify.TreeTagger;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
 
-import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.util.Triple;
 
 /**
  * NER-based location name area tagger. It tags the areas that contain at least the specified number of location names. 
  * @author burgetr
  */
-public class LocationsTagger implements Tagger
+public class LocationsTagger extends NERTagger implements Tagger
 {
     private int mincnt;
-    private AbstractSequenceClassifier<?> classifier;
     
     /**
      * Construct a new tagger.
@@ -33,7 +30,6 @@ public class LocationsTagger implements Tagger
     public LocationsTagger(int mincnt)
     {
         this.mincnt = mincnt;
-        classifier = TreeTagger.sharedClassifier;
     }
 
     public TextTag getTag()
@@ -51,7 +47,7 @@ public class LocationsTagger implements Tagger
         if (node.isLeaf())
         {
             String text = node.getText();
-            List<Triple<String,Integer,Integer>> list = classifier.classifyToCharacterOffsets(text);
+            List<Triple<String,Integer,Integer>> list = getClassifier().classifyToCharacterOffsets(text);
             int cnt = 0;
             for (Triple<String,Integer,Integer> t : list)
             {
@@ -82,7 +78,7 @@ public class LocationsTagger implements Tagger
     public Vector<String> extract(String src)
     {
         Vector<String> ret = new Vector<String>();
-        List<Triple<String,Integer,Integer>> list = classifier.classifyToCharacterOffsets(src);
+        List<Triple<String,Integer,Integer>> list = getClassifier().classifyToCharacterOffsets(src);
         for (Triple<String,Integer,Integer> t : list)
         {
             if (t.first().equals("LOCATION"))

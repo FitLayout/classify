@@ -11,24 +11,21 @@ import java.util.regex.Pattern;
 
 import org.fit.layout.classify.TextTag;
 import org.fit.layout.classify.Tagger;
-import org.fit.layout.classify.TreeTagger;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
 
-import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.util.Triple;
 
 /**
  * NER-based personal name area tagger. It tags the areas that contain at least the specified number of personal names. 
  * @author burgetr
  */
-public class PersonsTagger implements Tagger
+public class PersonsTagger extends NERTagger implements Tagger
 {
     /** The expression describing the allowed format of the title continuation */
     protected Pattern contexpr = Pattern.compile("[A-Z][A-Za-z]"); 
 
     private int mincnt;
-    private AbstractSequenceClassifier<?> classifier;
     
     /**
      * Construct a new tagger.
@@ -37,7 +34,6 @@ public class PersonsTagger implements Tagger
     public PersonsTagger(int mincnt)
     {
         this.mincnt = mincnt;
-        classifier = TreeTagger.sharedClassifier;
     }
 
     public TextTag getTag()
@@ -55,7 +51,7 @@ public class PersonsTagger implements Tagger
         if (node.isLeaf())
         {
             String text = node.getText();
-            List<Triple<String,Integer,Integer>> list = classifier.classifyToCharacterOffsets(text);
+            List<Triple<String,Integer,Integer>> list = getClassifier().classifyToCharacterOffsets(text);
             int cnt = 0;
             for (Triple<String,Integer,Integer> t : list)
             {
@@ -92,7 +88,7 @@ public class PersonsTagger implements Tagger
     public Vector<String> extract(String src)
     {
         Vector<String> ret = new Vector<String>();
-        List<Triple<String,Integer,Integer>> list = classifier.classifyToCharacterOffsets(src);
+        List<Triple<String,Integer,Integer>> list = getClassifier().classifyToCharacterOffsets(src);
         for (Triple<String,Integer,Integer> t : list)
         {
             if (t.first().equals("PERSON"))

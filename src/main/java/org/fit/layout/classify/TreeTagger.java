@@ -28,26 +28,7 @@ public class TreeTagger /*implements NodeJoinAnalyzer*/
     //public static AbstractSequenceClassifier<?> sharedClassifier = CRFClassifier.getClassifierNoExceptions("/opt/java/classifiers/all.3class.distsim.crf.ser.gz");
     //public static AbstractSequenceClassifier<?> sharedClassifier = CRFClassifier.getClassifierNoExceptions(System.getProperty("user.home") + "/tmp/classifiers/all.3class.distsim.crf.ser.gz");
     
-    public static AbstractSequenceClassifier<?> sharedClassifier;
-    
-    static {
-        System.err.println("CLoading " + ClassLoader.getSystemResource("3class.gz") );
-        InputStream is;
-        try
-        {
-            is = new GZIPInputStream(ClassLoader.getSystemResourceAsStream("3class.gz"));
-            sharedClassifier = CRFClassifier.getClassifier(is);
-        } catch (IOException e)
-        {
-            System.err.println("Load failed: " + e.getMessage());
-        } catch (ClassCastException e)
-        {
-            System.err.println("Load failed: " + e.getMessage());
-        } catch (ClassNotFoundException e)
-        {
-            System.err.println("Load failed: " + e.getMessage());
-        }
-    }
+    private static AbstractSequenceClassifier<?> sharedClassifier;
     
     protected Area root;
     protected Vector<Tagger> taggers;
@@ -144,5 +125,29 @@ public class TreeTagger /*implements NodeJoinAnalyzer*/
         }
         return false;
     } */   
+    
+    public static AbstractSequenceClassifier<?> getSharedClassifier()
+    {
+        if (sharedClassifier == null)
+        {
+            System.err.println("CLoading " + ClassLoader.getSystemResource("3class.gz") );
+            InputStream is;
+            try
+            {
+                is = new GZIPInputStream(ClassLoader.getSystemResourceAsStream("3class.gz"));
+                sharedClassifier = CRFClassifier.getClassifier(is);
+            } catch (IOException e)
+            {
+                System.err.println("Load failed: " + e.getMessage());
+            } catch (ClassCastException e)
+            {
+                System.err.println("Load failed: " + e.getMessage());
+            } catch (ClassNotFoundException e)
+            {
+                System.err.println("Load failed: " + e.getMessage());
+            }
+        }
+        return sharedClassifier;
+    }
     
 }
