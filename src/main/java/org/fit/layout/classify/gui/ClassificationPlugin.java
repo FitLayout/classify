@@ -16,6 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import org.fit.layout.api.AreaTreeOperator;
 import org.fit.layout.api.ServiceManager;
@@ -166,25 +167,34 @@ public class ClassificationPlugin implements BrowserPlugin, AreaSelectionListene
     @Override
     public void areaSelected(Area area)
     {
-        //ensure that some tree root is set in the feature extractor
-        FeatureExtractor fe = getFeatureExtractor();
-        if (fe.getTreeRoot() == null)
-            fe.setTree(browser.getAreaTree().getRoot());
-        //classify the instance
-        Instance data = getFeatureExtractor().getAreaFeatures(area, dataset);
-        //display the result
-        Vector<Vector <String>> fvals = new Vector<Vector <String>>();
-        for (int i = 0; i < data.numAttributes(); i++)
+        if (area != null)
         {
-            String name = data.attribute(i).name();
-            String value;
-            if (data.attribute(i).isNumeric())
-                value = String.valueOf(data.value(i));
-            else
-                value = data.stringValue(i);
-            fvals.add(infoTableData(name, value));
+            //ensure that some tree root is set in the feature extractor
+            FeatureExtractor fe = getFeatureExtractor();
+            if (fe.getTreeRoot() == null)
+                fe.setTree(browser.getAreaTree().getRoot());
+            //classify the instance
+            Instance data = getFeatureExtractor().getAreaFeatures(area, dataset);
+            //display the result
+            Vector<Vector <String>> fvals = new Vector<Vector <String>>();
+            for (int i = 0; i < data.numAttributes(); i++)
+            {
+                String name = data.attribute(i).name();
+                String value;
+                if (data.attribute(i).isNumeric())
+                    value = String.valueOf(data.value(i));
+                else
+                    value = data.stringValue(i);
+                fvals.add(infoTableData(name, value));
+            }
+            getFeaturesTable().setModel(new DefaultTableModel(fvals, infoTableData("Property", "Value")));
         }
-        getFeaturesTable().setModel(new DefaultTableModel(fvals, infoTableData("Property", "Value")));
+        else //no area selected
+        {
+            TableModel model = getFeaturesTable().getModel();
+            if (model != null && model instanceof DefaultTableModel)
+                ((DefaultTableModel) model).setRowCount(0);
+        }
     }
     
     private Vector<String> infoTableData(String prop, String value)
