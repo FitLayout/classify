@@ -15,8 +15,12 @@ import org.fit.layout.gui.AreaSelectionListener;
 import org.fit.layout.gui.Browser;
 import org.fit.layout.gui.BrowserPlugin;
 import org.fit.layout.gui.GUIUpdateListener;
+import org.fit.layout.gui.TreeListener;
 import org.fit.layout.impl.DefaultTag;
 import org.fit.layout.model.Area;
+import org.fit.layout.model.AreaTree;
+import org.fit.layout.model.LogicalAreaTree;
+import org.fit.layout.model.Page;
 import org.fit.layout.model.Tag;
 
 import javax.swing.JComboBox;
@@ -43,7 +47,7 @@ import javax.swing.JLabel;
  * @author milicka
  * @author burgetr
  */
-public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, GUIUpdateListener
+public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, TreeListener, GUIUpdateListener
 {
 	private Browser browser;
 	private PageStorage pageStorage;
@@ -68,6 +72,8 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, GU
 	private JButton btnPrevious;
 	private JButton btnNext;
 	private JLabel lblSelectionStatus;
+	private JButton btnSave;
+	private JButton btnSaveNext;
 	
 	/**
 	 * @wbp.parser.entryPoint
@@ -104,6 +110,24 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, GU
     }
 
     @Override
+    public void pageRendered(Page page)
+    {
+        updateGUI();
+    }
+
+    @Override
+    public void areaTreeUpdated(AreaTree tree)
+    {
+        updateGUI();
+    }
+
+    @Override
+    public void logicalAreaTreeUpdated(LogicalAreaTree tree)
+    {
+        updateGUI();
+    }
+
+    @Override
     public void updateGUI()
     {
         updateStorageStatus();
@@ -137,12 +161,31 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, GU
             
             btnPrevious.setEnabled(setStorage.previousPageAvailable());
             btnNext.setEnabled(setStorage.nextPageAvailable());
+            if (pageStorage.updateAvailable())
+            {
+                btnSave.setText("Save changes");
+                btnSave.setEnabled(true);
+                btnSaveNext.setEnabled(setStorage.nextPageAvailable());
+            }
+            else if (pageStorage.saveAvailable())
+            {
+                btnSave.setText("Save as new");
+                btnSave.setEnabled(true);
+                btnSaveNext.setEnabled(false);
+            }
+            else
+            {
+                btnSave.setEnabled(false);
+                btnSaveNext.setEnabled(false);
+            }
         }
         else
         {
             lblSelectionStatus.setText("(no storage available)");
-            /*btnPrevious.setEnabled(false);
-            btnNext.setEnabled(false);*/
+            btnPrevious.setEnabled(false);
+            btnNext.setEnabled(false);
+            btnSave.setEnabled(false);
+            btnSaveNext.setEnabled(false);
         }
     }
     
@@ -380,6 +423,8 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, GU
         	storageButtonPanel = new JPanel();
         	FlowLayout flowLayout = (FlowLayout) storageButtonPanel.getLayout();
         	flowLayout.setAlignment(FlowLayout.RIGHT);
+        	storageButtonPanel.add(getBtnSaveNext());
+        	storageButtonPanel.add(getBtnSave());
         	storageButtonPanel.add(getBtnPrevious());
         	storageButtonPanel.add(getBtnNext());
         }
@@ -422,5 +467,27 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, GU
         	lblSelectionStatus = new JLabel("No page selected");
         }
         return lblSelectionStatus;
+    }
+    private JButton getBtnSave() {
+        if (btnSave == null) {
+        	btnSave = new JButton("Save");
+        	btnSave.addActionListener(new ActionListener() {
+        	    public void actionPerformed(ActionEvent e) 
+        	    {
+        	    }
+        	});
+        }
+        return btnSave;
+    }
+    private JButton getBtnSaveNext() {
+        if (btnSaveNext == null) {
+        	btnSaveNext = new JButton("Save&Next");
+        	btnSaveNext.addActionListener(new ActionListener() {
+        	    public void actionPerformed(ActionEvent e) 
+        	    {
+        	    }
+        	});
+        }
+        return btnSaveNext;
     }
 }
