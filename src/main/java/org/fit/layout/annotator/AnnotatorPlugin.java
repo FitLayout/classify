@@ -57,7 +57,7 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
 	private Browser browser;
 	private PageStorage pageStorage;
 	private PageSetStorage setStorage;
-    private String[] tags = new String[] {"h1","h2","h3","perex","paragraph","title","date","person" };
+    private String[] tags = new String[] {"none"};
     private Area selectedArea;
     private boolean tagsChanged;
 
@@ -106,6 +106,19 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
 		
 		return true;
 	}
+
+    public String[] getTags()
+    {
+        return tags;
+    }
+
+    public void setTags(String[] tags)
+    {
+        this.tags = tags;
+        cbx_tagSelector.removeAllItems();
+        for(String tag: this.tags)
+            cbx_tagSelector.addItem(tag);
+    }
 
     @Override
     public void areaSelected(Area area)
@@ -486,7 +499,7 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
         return pnl_info;
     }
     
-    private JTextField getTxtType() 
+    public JTextField getTxtType() 
     {
         if (txtType == null) {
         	txtType = new JTextField();
