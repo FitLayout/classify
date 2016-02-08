@@ -33,7 +33,9 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
@@ -132,6 +134,7 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
     public void updateGUI()
     {
         updateStorageStatus();
+        highlightTags();
     }
 
     private void updateTableModel()
@@ -193,6 +196,35 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
         }
     }
     
+    public void highlightTags()
+    {
+        if (getChckbxHighlightTags().isSelected())
+        {
+            browser.redrawPage();
+            if (browser.getAreaTree() != null && browser.getAreaTree().getRoot() != null)
+            {
+                String type = getTxtType().getText();
+                recursiveColorizeTags(browser.getAreaTree().getRoot(), type);
+            }
+            browser.updateDisplay();
+        }
+    }
+    
+    private void recursiveColorizeTags(Area root, String type)
+    {
+        //find tags of the given type
+        Set<Tag> tags = new HashSet<Tag>();
+        for (Tag tag : root.getTags().keySet())
+        {
+            if (tag.getType().equals(type))
+                tags.add(tag);
+        }
+        //display the tags
+        browser.getOutputDisplay().colorizeByTags(root, tags);
+        for (Area child : root.getChildAreas())
+            recursiveColorizeTags(child, type);
+    }
+
     //===========================================================================
     
     private JPanel getPnl_mainPanel()
@@ -318,6 +350,7 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
 				        Tag tag = new DefaultTag(txtType.getText(), cbx_tagSelector.getSelectedItem().toString());
 				        selectedArea.addTag(tag, 1.0f);
 				        updateTableModel();
+				        highlightTags();
 				    }
 				}
 			});
@@ -342,6 +375,7 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
 				        if (selectedArea != null)
 				            selectedArea.removeTag(tag);
 				        updateTableModel();
+                        highlightTags();
 				    }
 				}
 			});
@@ -400,6 +434,21 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
     {
         if (chckbxHighlightTags == null) {
         	chckbxHighlightTags = new JCheckBox("Highlight tags");
+        	chckbxHighlightTags.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    if (chckbxHighlightTags.isSelected())
+                    {
+                        highlightTags();
+                    }
+                    else
+                    {
+                        browser.redrawPage();
+                        browser.updateDisplay();
+                    }
+                }
+        	});
         }
         return chckbxHighlightTags;
     }
