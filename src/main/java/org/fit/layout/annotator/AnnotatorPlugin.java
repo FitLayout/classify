@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import org.fit.layout.api.PageSet;
 import org.fit.layout.api.PageSetStorage;
 import org.fit.layout.api.PageStorage;
 import org.fit.layout.api.ServiceManager;
@@ -153,11 +154,14 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
     {
         if (setStorage != null)
         {
+            PageSet pset = setStorage.getCurrentPageSet();
             int sel = setStorage.getCurrentIndex();
-            if (sel == -1)
-                lblSelectionStatus.setText("No page loaded");
+            if (pset == null)
+                lblSelectionStatus.setText("No page set loaded");
+            else if (sel == -1)
+                lblSelectionStatus.setText("Page set " + pset.getName() + ": No page loaded");
             else
-                lblSelectionStatus.setText("Page " + sel + " / " + setStorage.getTotalCount());
+                lblSelectionStatus.setText("Page set " + pset.getName() + ": Page " + (sel+1) + " / " + setStorage.getTotalCount());
             
             btnPrevious.setEnabled(setStorage.previousPageAvailable());
             btnNext.setEnabled(setStorage.nextPageAvailable());
