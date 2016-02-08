@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -29,6 +30,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -57,6 +59,7 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
 	private PageSetStorage setStorage;
     private String[] tags = new String[] {"h1","h2","h3","perex","paragraph","title","date","person" };
     private Area selectedArea;
+    private boolean tagsChanged;
 
 	private JPanel pnl_mainPanel;
 	private JPanel pnl_selection;
@@ -115,12 +118,14 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
     @Override
     public void pageRendered(Page page)
     {
+        tagsChanged = false;
         updateGUI();
     }
 
     @Override
     public void areaTreeUpdated(AreaTree tree)
     {
+        tagsChanged = false;
         updateGUI();
     }
 
@@ -170,13 +175,13 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
             btnNext.setEnabled(setStorage.nextPageAvailable());
             if (pageStorage.updateAvailable())
             {
-                btnSave.setText("Save changes");
+                btnSave.setText("Save changes" + (tagsChanged?"*":""));
                 btnSave.setEnabled(true);
                 btnSaveNext.setEnabled(setStorage.nextPageAvailable());
             }
             else if (pageStorage.saveAvailable())
             {
-                btnSave.setText("Save as new");
+                btnSave.setText("Save as new" + (tagsChanged?"*":""));
                 btnSave.setEnabled(true);
                 btnSaveNext.setEnabled(false);
             }
@@ -225,6 +230,16 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
             recursiveColorizeTags(child, type);
     }
 
+    private boolean confirmDiscard(Component parentComponent)
+    {
+        int result = JOptionPane.showConfirmDialog(btnNext,
+                new String[]{"Tags have been altered in the current page.", "Do you really want to leave the page and discard changes?"}, 
+                "Discard changes?",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
+        return (result == JOptionPane.YES_OPTION);
+    }
+    
     //===========================================================================
     
     private JPanel getPnl_mainPanel()
@@ -351,6 +366,11 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
 				        selectedArea.addTag(tag, 1.0f);
 				        updateTableModel();
 				        highlightTags();
+				        if (!tagsChanged)
+				        {
+				            tagsChanged = true;
+				            updateStorageStatus();
+				        }
 				    }
 				}
 			});
@@ -376,6 +396,11 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
 				            selectedArea.removeTag(tag);
 				        updateTableModel();
                         highlightTags();
+                        if (!tagsChanged)
+                        {
+                            tagsChanged = true;
+                            updateStorageStatus();
+                        }
 				    }
 				}
 			});
@@ -491,8 +516,16 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
         	    {
                     if (setStorage != null && setStorage.previousPageAvailable())
                     {
-                        setStorage.loadPrevious();
-                        updateStorageStatus();
+                        if (tagsChanged)
+                        {
+                            if (confirmDiscard(btnNext))
+                                tagsChanged = false;
+                        }
+                        if (!tagsChanged)
+                        {
+                            setStorage.loadPrevious();
+                            updateStorageStatus();
+                        }
                     }
         	    }
         	});
@@ -507,8 +540,16 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
         	    {
         	        if (setStorage != null && setStorage.nextPageAvailable())
         	        {
-        	            setStorage.loadNext();
-        	            updateStorageStatus();
+        	            if (tagsChanged)
+        	            {
+        	                if (confirmDiscard(btnNext))
+        	                    tagsChanged = false;
+        	            }
+        	            if (!tagsChanged)
+        	            {
+            	            setStorage.loadNext();
+            	            updateStorageStatus();
+        	            }
         	        }
         	    }
         	});
@@ -527,6 +568,17 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
         	btnSave.addActionListener(new ActionListener() {
         	    public void actionPerformed(ActionEvent e) 
         	    {
+                    if (pageStorage.updateAvailable())
+                    {
+                        pageStorage.updateCurrentPage();
+                        tagsChanged = false;
+                    }
+                    else if (pageStorage.saveAvailable())
+                    {
+                        pageStorage.saveCurrentPage();
+                        tagsChanged = false;
+                    }
+                    updateGUI();
         	    }
         	});
         }
@@ -538,6 +590,13 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
         	btnSaveNext.addActionListener(new ActionListener() {
         	    public void actionPerformed(ActionEvent e) 
         	    {
+                    if (pageStorage.updateAvailable())
+                    {
+                        pageStorage.updateCurrentPage();
+                        tagsChanged = false;
+                        if (setStorage != null && setStorage.nextPageAvailable())
+                            setStorage.loadNext();
+                    }
         	    }
         	});
         }
