@@ -163,7 +163,7 @@ public class DateTagger implements Tagger
         return true;
     }
     
-    public Vector<String> extract(String src)
+    public List<String> extract(String src)
     {
         Vector<String> ret = new Vector<String>();
         
@@ -203,7 +203,7 @@ public class DateTagger implements Tagger
     {
         Vector<Date> ret = new Vector<Date>();
         
-        Vector<String> srcdates = extract(s);
+        List<String> srcdates = extract(s);
         for (String sdate : srcdates)
         {
             String[] words = sdate.toLowerCase().split("\\s+");

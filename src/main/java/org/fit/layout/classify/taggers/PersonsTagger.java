@@ -85,7 +85,7 @@ public class PersonsTagger extends NERTagger implements Tagger
         return true;
     }
     
-    public Vector<String> extract(String src)
+    public List<String> extract(String src)
     {
         Vector<String> ret = new Vector<String>();
         List<Triple<String,Integer,Integer>> list = getClassifier().classifyToCharacterOffsets(src);

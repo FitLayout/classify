@@ -5,7 +5,7 @@
  */
 package org.fit.layout.classify;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
@@ -61,6 +61,6 @@ public interface Tagger
      * @param src The source string. 
      * @return A vector of extracted strings.
      */
-    public Vector<String> extract(String src);
+    public List<String> extract(String src);
     
 }

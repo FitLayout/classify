@@ -1,5 +1,6 @@
 package org.fit.layout.classify.taggers;
 
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -84,7 +85,7 @@ public class TitleTagger implements Tagger
         return (!other.getValue().equals("session"));
     }
     
-    public Vector<String> extract(String src)
+    public List<String> extract(String src)
     {
         Vector<String> ret = new Vector<String>();
         
