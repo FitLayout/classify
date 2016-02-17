@@ -12,6 +12,7 @@ import javax.swing.JTable;
 import org.fit.layout.api.PageSet;
 import org.fit.layout.api.PageSetStorage;
 import org.fit.layout.api.PageStorage;
+import org.fit.layout.api.ScriptObject;
 import org.fit.layout.api.ServiceManager;
 import org.fit.layout.gui.AreaSelectionListener;
 import org.fit.layout.gui.Browser;
@@ -35,6 +36,8 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -52,7 +55,7 @@ import javax.swing.JLabel;
  * @author milicka
  * @author burgetr
  */
-public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, TreeListener, GUIUpdateListener
+public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, TreeListener, GUIUpdateListener, ScriptObject
 {
 	private Browser browser;
 	private PageStorage pageStorage;
@@ -253,6 +256,29 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
         return (result == JOptionPane.YES_OPTION);
     }
     
+    //===========================================================================
+    
+    @Override
+    public String getVarName()
+    {
+        return "annotator";
+    }
+
+    @Override
+    public void setIO(Reader in, Writer out, Writer err)
+    {
+    }
+    
+    public void setTagType(String type)
+    {
+        getTxtType().setText(type);
+    }
+    
+    public String getTagType()
+    {
+        return getTxtType().getText();
+    }
+
     //===========================================================================
     
     private JPanel getPnl_mainPanel()
@@ -615,4 +641,5 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
         }
         return btnSaveNext;
     }
+
 }

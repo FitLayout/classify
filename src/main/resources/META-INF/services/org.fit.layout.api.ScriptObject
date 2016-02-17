@@ -1,2 +1,2 @@
-org.fit.layout.annotator.ConsoleApi
+org.fit.layout.annotator.AnnotatorPlugin
 org.fit.layout.classify.op.TagEntitiesOperator
