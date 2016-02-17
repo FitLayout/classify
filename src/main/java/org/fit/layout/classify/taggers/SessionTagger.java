@@ -6,7 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.fit.layout.classify.TextTag;
-import org.fit.layout.classify.Tagger;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
 
@@ -14,7 +13,7 @@ import org.fit.layout.model.Tag;
  *
  * @author burgetr
  */
-public class SessionTagger implements Tagger
+public class SessionTagger extends BaseTagger
 {
 
     protected final int MIN_WORDS = 2;
@@ -38,6 +37,24 @@ public class SessionTagger implements Tagger
         blacklist.add("chair");
     }
     
+    @Override
+    public String getId()
+    {
+        return "ESWC.Tag.Session";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Session titles";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "...";
+    }
+
     public TextTag getTag()
     {
         return new TextTag("session", this);

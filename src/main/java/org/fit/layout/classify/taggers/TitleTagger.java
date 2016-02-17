@@ -6,11 +6,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.fit.layout.classify.TextTag;
-import org.fit.layout.classify.Tagger;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
 
-public class TitleTagger implements Tagger
+public class TitleTagger extends BaseTagger
 {
     protected final int MIN_WORDS = 3;
     /** The expression the whole area must start with */
@@ -30,16 +29,37 @@ public class TitleTagger implements Tagger
         blacklist.add("chair");
     }
     
+    @Override
+    public String getId()
+    {
+        return "FITLayout.Tag.Title";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Titles";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "General paper or news titles";
+    }
+    
+    @Override
     public TextTag getTag()
     {
         return new TextTag("title", this);
     }
 
+    @Override
     public double getRelevance()
     {
         return 0.6;
     }
     
+    @Override
     public boolean belongsTo(Area node)
     {
         if (node.isLeaf())
@@ -62,6 +82,7 @@ public class TitleTagger implements Tagger
         return false;
     }
 
+    @Override
     public boolean allowsContinuation(Area node)
     {
         if (node.isLeaf())
@@ -75,16 +96,19 @@ public class TitleTagger implements Tagger
         return false;
     }
 
+    @Override
     public boolean allowsJoining()
     {
         return true;
     }
     
+    @Override
     public boolean mayCoexistWith(Tag other)
     {
         return (!other.getValue().equals("session"));
     }
     
+    @Override
     public List<String> extract(String src)
     {
         Vector<String> ret = new Vector<String>();

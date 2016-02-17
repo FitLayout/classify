@@ -14,7 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.fit.layout.classify.TextTag;
-import org.fit.layout.classify.Tagger;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
 
@@ -25,7 +24,7 @@ import com.joestelmach.natty.Parser;
  * @author burgetr
  *
  */
-public class DateTagger implements Tagger
+public class DateTagger extends BaseTagger
 {
     private static Map<String, String> dw;
     static {
@@ -116,16 +115,37 @@ public class DateTagger implements Tagger
     {
     }
     
+    @Override
+    public String getId()
+    {
+        return "FITLayout.Tag.Date";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Dates";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Identifies dates in the most common formats";
+    }
+    
+    @Override
     public TextTag getTag()
     {
         return new TextTag("date", this);
     }
 
+    @Override
     public double getRelevance()
     {
         return 0.95;
     }
     
+    @Override
     public boolean belongsTo(Area node)
     {
         if (node.isLeaf())
@@ -148,21 +168,25 @@ public class DateTagger implements Tagger
         return false;
     }
     
+    @Override
     public boolean allowsContinuation(Area node)
     {
     	return false;
     }
 
+    @Override
     public boolean allowsJoining()
     {
         return false;
     }
 
+    @Override
     public boolean mayCoexistWith(Tag other)
     {
         return true;
     }
     
+    @Override
     public List<String> extract(String src)
     {
         Vector<String> ret = new Vector<String>();

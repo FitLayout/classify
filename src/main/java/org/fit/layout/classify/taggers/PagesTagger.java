@@ -10,7 +10,6 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.fit.layout.classify.Tagger;
 import org.fit.layout.classify.TextTag;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
@@ -19,9 +18,27 @@ import org.fit.layout.model.Tag;
  * Very simple page numbers tagger. Recognizes the numeric ranges (e.g. 12-24)
  * @author burgetr
  */
-public class PagesTagger implements Tagger
+public class PagesTagger extends BaseTagger
 {
     protected Pattern pgexpr = Pattern.compile("[1-9][0-9]*(\\s*\\p{Pd}\\s*[1-9][0-9]*)?");
+    
+    @Override
+    public String getId()
+    {
+        return "ESWC.Tag.Pages";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Page ranges";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Very simple page numbers tagger. Recognizes the numeric ranges (e.g. 12-24)";
+    }
     
     public TextTag getTag()
     {

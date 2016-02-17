@@ -13,7 +13,7 @@ import edu.stanford.nlp.ie.AbstractSequenceClassifier;
  * 
  * @author burgetr
  */
-public abstract class NERTagger
+public abstract class NERTagger extends BaseTagger
 {
 
     public AbstractSequenceClassifier<?> getClassifier()

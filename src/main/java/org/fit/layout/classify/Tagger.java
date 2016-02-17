@@ -7,6 +7,8 @@ package org.fit.layout.classify;
 
 import java.util.List;
 
+import org.fit.layout.api.ParametrizedOperation;
+import org.fit.layout.api.Service;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
 
@@ -15,7 +17,7 @@ import org.fit.layout.model.Tag;
  * 
  * @author burgetr
  */
-public interface Tagger
+public interface Tagger extends Service, ParametrizedOperation
 {
 
     /**

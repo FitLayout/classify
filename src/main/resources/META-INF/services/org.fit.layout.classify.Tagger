@@ -1,0 +1,6 @@
+org.fit.layout.classify.taggers.DateTagger
+org.fit.layout.classify.taggers.LocationsTagger
+org.fit.layout.classify.taggers.PagesTagger
+org.fit.layout.classify.taggers.PersonsTagger
+org.fit.layout.classify.taggers.TimeTagger
+org.fit.layout.classify.taggers.TitleTagger

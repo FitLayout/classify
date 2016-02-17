@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Vector;
 
 import org.fit.layout.classify.TextTag;
-import org.fit.layout.classify.Tagger;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
 
@@ -19,9 +18,14 @@ import edu.stanford.nlp.util.Triple;
  * NER-based location name area tagger. It tags the areas that contain at least the specified number of location names. 
  * @author burgetr
  */
-public class LocationsTagger extends NERTagger implements Tagger
+public class LocationsTagger extends NERTagger
 {
     private int mincnt;
+    
+    public LocationsTagger()
+    {
+        mincnt = 1;
+    }
     
     /**
      * Construct a new tagger.
@@ -32,16 +36,59 @@ public class LocationsTagger extends NERTagger implements Tagger
         this.mincnt = mincnt;
     }
 
+    @Override
+    public String getId()
+    {
+        return "FITLayout.Tag.Location";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Locations";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "NER-based location name area tagger. It tags the areas that contain at least the specified number of location names";
+    }
+    
+    @Override
+    public String[] getParamNames()
+    {
+        return new String[]{"mincnt"};
+    }
+
+    @Override
+    public ValueType[] getParamTypes()
+    {
+        return new ValueType[]{ValueType.INTEGER};
+    }
+    
+    public int getMincnt()
+    {
+        return mincnt;
+    }
+
+    public void setMincnt(int mincnt)
+    {
+        this.mincnt = mincnt;
+    }
+
+    @Override
     public TextTag getTag()
     {
         return new TextTag("locations", this);
     }
 
+    @Override
     public double getRelevance()
     {
         return 0.8;
     }
     
+    @Override
     public boolean belongsTo(Area node)
     {
         if (node.isLeaf())
@@ -60,21 +107,25 @@ public class LocationsTagger extends NERTagger implements Tagger
         return false;
     }
     
+    @Override
     public boolean allowsContinuation(Area node)
     {
     	return false;
     }
 
+    @Override
     public boolean allowsJoining()
     {
         return true;
     }
 
+    @Override
     public boolean mayCoexistWith(Tag other)
     {
         return true;
     }
     
+    @Override
     public List<String> extract(String src)
     {
         Vector<String> ret = new Vector<String>();

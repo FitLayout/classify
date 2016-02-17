@@ -10,7 +10,6 @@ import java.util.Vector;
 import java.util.regex.Pattern;
 
 import org.fit.layout.classify.TextTag;
-import org.fit.layout.classify.Tagger;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
 
@@ -20,7 +19,7 @@ import edu.stanford.nlp.util.Triple;
  * NER-based personal name area tagger. It tags the areas that contain at least the specified number of personal names. 
  * @author burgetr
  */
-public class PersonsTagger extends NERTagger implements Tagger
+public class PersonsTagger extends NERTagger
 {
     /** The expression describing the allowed format of the title continuation */
     protected Pattern contexpr = Pattern.compile("[A-Z][A-Za-z]"); 
@@ -32,6 +31,46 @@ public class PersonsTagger extends NERTagger implements Tagger
      * @param mincnt the minimal count of the personal names detected in the area necessary for tagging this area.
      */
     public PersonsTagger(int mincnt)
+    {
+        this.mincnt = mincnt;
+    }
+
+    @Override
+    public String getId()
+    {
+        return "FITLayout.Tag.Person";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Persons";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "NER-based personal name area tagger. It tags the areas that contain at least the specified number of personal names.";
+    }
+    
+    @Override
+    public String[] getParamNames()
+    {
+        return new String[]{"mincnt"};
+    }
+
+    @Override
+    public ValueType[] getParamTypes()
+    {
+        return new ValueType[]{ValueType.INTEGER};
+    }
+    
+    public int getMincnt()
+    {
+        return mincnt;
+    }
+
+    public void setMincnt(int mincnt)
     {
         this.mincnt = mincnt;
     }

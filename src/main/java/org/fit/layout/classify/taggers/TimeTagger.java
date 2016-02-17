@@ -11,7 +11,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.fit.layout.classify.TextTag;
-import org.fit.layout.classify.Tagger;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
 
@@ -20,20 +19,41 @@ import org.fit.layout.model.Tag;
  * 
  * @author burgetr
  */
-public class TimeTagger implements Tagger
+public class TimeTagger extends BaseTagger
 {
     protected Pattern[] timeexpr = {Pattern.compile("[0-2]?[0-9][:\\.][0-5][0-9]([ap])?m?")};
     
+    @Override
+    public String getId()
+    {
+        return "FITLayout.Tag.Time";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Times";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Tags the areas that contain some time expressions";
+    }
+    
+    @Override
     public TextTag getTag()
     {
         return new TextTag("time", this);
     }
 
+    @Override
     public double getRelevance()
     {
         return 0.95;
     }
     
+    @Override
     public boolean belongsTo(Area node)
     {
         if (node.isLeaf())
@@ -52,21 +72,25 @@ public class TimeTagger implements Tagger
         return false;
     }
     
+    @Override
     public boolean allowsContinuation(Area node)
     {
     	return false;
     }
 
+    @Override
     public boolean allowsJoining()
     {
         return false;
     }
     
+    @Override
     public boolean mayCoexistWith(Tag other)
     {
         return true;
     }
     
+    @Override
     public List<String> extract(String src)
     {
         Vector<String> ret = new Vector<String>();
