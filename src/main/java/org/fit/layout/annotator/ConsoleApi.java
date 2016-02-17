@@ -29,7 +29,7 @@ public class ConsoleApi implements ScriptObject
     }
     
     @Override
-    public String getName()
+    public String getVarName()
     {
         return "annotator";
     }

@@ -5,9 +5,12 @@
  */
 package org.fit.layout.classify.op;
 
+import java.io.Reader;
+import java.io.Writer;
 import java.util.List;
 import java.util.Vector;
 
+import org.fit.layout.api.ScriptObject;
 import org.fit.layout.classify.Tagger;
 import org.fit.layout.classify.TreeTagger;
 import org.fit.layout.classify.taggers.DateTagger;
@@ -24,7 +27,7 @@ import org.fit.layout.model.AreaTree;
  * 
  * @author burgetr
  */
-public class TagEntitiesOperator extends BaseOperator
+public class TagEntitiesOperator extends BaseOperator implements ScriptObject
 {
     protected final String[] paramNames = {};
     protected final ValueType[] paramTypes = {};
@@ -110,6 +113,17 @@ public class TagEntitiesOperator extends BaseOperator
         for (Tagger t : taggers)
             tagger.addTagger(t);
         tagger.tagTree();
+    }
+
+    @Override
+    public String getVarName()
+    {
+        return "tagger";
+    }
+
+    @Override
+    public void setIO(Reader in, Writer out, Writer err)
+    {
     }
 
 }
