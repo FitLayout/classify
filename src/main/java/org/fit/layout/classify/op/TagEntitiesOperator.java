@@ -15,7 +15,6 @@ import org.fit.layout.classify.Tagger;
 import org.fit.layout.classify.TreeTagger;
 import org.fit.layout.classify.taggers.DateTagger;
 import org.fit.layout.classify.taggers.LocationsTagger;
-import org.fit.layout.classify.taggers.PagesTagger;
 import org.fit.layout.classify.taggers.PersonsTagger;
 import org.fit.layout.classify.taggers.TimeTagger;
 import org.fit.layout.classify.taggers.TitleTagger;
@@ -96,7 +95,6 @@ public class TagEntitiesOperator extends BaseOperator implements ScriptObject
         Tagger tPersons = new PersonsTagger(1);
         Tagger tLoc = new LocationsTagger(1);
         Tagger tTitle = new TitleTagger();
-        Tagger tPages = new PagesTagger();
         
         taggers = new Vector<Tagger>();
         taggers.add(tTime);
@@ -104,7 +102,6 @@ public class TagEntitiesOperator extends BaseOperator implements ScriptObject
         taggers.add(tPersons);
         taggers.add(tLoc);
         taggers.add(tTitle);
-        taggers.add(tPages);
     }
     
     //==============================================================================
