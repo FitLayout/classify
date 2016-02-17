@@ -56,7 +56,8 @@ public class TagEntitiesOperator extends BaseOperator implements ScriptObject
     @Override
     public String getDescription()
     {
-        return "..."; //TODO
+        return "Recognizes entities in area text using different taggers"
+                + "and adds the corresponding tags to the areas.";
     }
 
     @Override
@@ -78,6 +79,14 @@ public class TagEntitiesOperator extends BaseOperator implements ScriptObject
     public void addTagger(Tagger tagger)
     {
         taggers.add(tagger);
+    }
+    
+    /**
+     * Unregisters all taggers from the operator.
+     */
+    public void clearTaggers()
+    {
+        taggers.clear();
     }
     
     protected void initTaggers()
@@ -118,7 +127,7 @@ public class TagEntitiesOperator extends BaseOperator implements ScriptObject
     @Override
     public String getVarName()
     {
-        return "tagger";
+        return "taggers";
     }
 
     @Override
