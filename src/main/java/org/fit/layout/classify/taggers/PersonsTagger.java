@@ -26,6 +26,11 @@ public class PersonsTagger extends NERTagger
 
     private int mincnt;
     
+    public PersonsTagger()
+    {
+        mincnt = 1;
+    }
+    
     /**
      * Construct a new tagger.
      * @param mincnt the minimal count of the personal names detected in the area necessary for tagging this area.

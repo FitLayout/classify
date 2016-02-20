@@ -7,17 +7,15 @@ package org.fit.layout.classify.op;
 
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
+import java.util.Map;
 
+import org.fit.layout.api.ParametrizedOperation;
 import org.fit.layout.api.ScriptObject;
+import org.fit.layout.api.ServiceManager;
 import org.fit.layout.classify.Tagger;
 import org.fit.layout.classify.TreeTagger;
-import org.fit.layout.classify.taggers.DateTagger;
-import org.fit.layout.classify.taggers.LocationsTagger;
-import org.fit.layout.classify.taggers.PersonsTagger;
-import org.fit.layout.classify.taggers.TimeTagger;
-import org.fit.layout.classify.taggers.TitleTagger;
 import org.fit.layout.impl.BaseOperator;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.AreaTree;
@@ -32,7 +30,8 @@ public class TagEntitiesOperator extends BaseOperator implements ScriptObject
     protected final ValueType[] paramTypes = {};
     
     private TreeTagger tagger;
-    private List<Tagger> taggers;
+    private Map<String, Tagger> availableTaggers;
+    private List<Tagger> usedTaggers;
 
     
     public TagEntitiesOperator()
@@ -77,7 +76,7 @@ public class TagEntitiesOperator extends BaseOperator implements ScriptObject
      */
     public void addTagger(Tagger tagger)
     {
-        taggers.add(tagger);
+        usedTaggers.add(tagger);
     }
     
     /**
@@ -85,23 +84,22 @@ public class TagEntitiesOperator extends BaseOperator implements ScriptObject
      */
     public void clearTaggers()
     {
-        taggers.clear();
+        usedTaggers.clear();
+    }
+    
+    public Tagger findTagger(String id, Map<String, Object> params)
+    {
+        ParametrizedOperation op = availableTaggers.get(id);
+        if (op != null)
+            ServiceManager.setServiceParams(op, params);
+        return (Tagger) op;
     }
     
     protected void initTaggers()
     {
-        Tagger tTime = new TimeTagger();
-        Tagger tDate = new DateTagger();
-        Tagger tPersons = new PersonsTagger(1);
-        Tagger tLoc = new LocationsTagger(1);
-        Tagger tTitle = new TitleTagger();
-        
-        taggers = new Vector<Tagger>();
-        taggers.add(tTime);
-        taggers.add(tDate);
-        taggers.add(tPersons);
-        taggers.add(tLoc);
-        taggers.add(tTitle);
+        availableTaggers = ServiceManager.loadServicesByType(Tagger.class);
+        //use all available taggers by default
+        usedTaggers = new ArrayList<Tagger>(availableTaggers.values());
     }
     
     //==============================================================================
@@ -116,7 +114,7 @@ public class TagEntitiesOperator extends BaseOperator implements ScriptObject
     public void apply(AreaTree atree, Area root)
     {
         tagger = new TreeTagger(root);
-        for (Tagger t : taggers)
+        for (Tagger t : usedTaggers)
             tagger.addTagger(t);
         tagger.tagTree();
     }
@@ -124,7 +122,7 @@ public class TagEntitiesOperator extends BaseOperator implements ScriptObject
     @Override
     public String getVarName()
     {
-        return "taggers";
+        return "entities";
     }
 
     @Override
