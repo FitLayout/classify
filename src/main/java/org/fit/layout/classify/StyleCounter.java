@@ -22,11 +22,18 @@ public class StyleCounter<T>
     private Map<T, Integer> styles;
     
     
+    /**
+     * Creates an empty style counter.
+     */
     public StyleCounter()
     {
         styles = new HashMap<T, Integer>();
     }
     
+    /**
+     * Adds a new occurence to the counter.
+     * @param style The style to be added.
+     */
     public void add(T style)
     {
         Integer cnt = styles.get(style);
@@ -36,12 +43,22 @@ public class StyleCounter<T>
             styles.put(style, cnt+1);
     }
     
+    /**
+     * Obtains total registered number of occurences of the given style. 
+     * @param style the style whose number of occurences should be returned
+     * @return
+     */
     public int getCount(T style)
     {
         Integer cnt = styles.get(style);
         return cnt == null ? 0 : cnt;
     }
     
+    /**
+     * Obtains the most frequent style. If there are multiple styles with the same frequency then
+     * only one of them is returned.
+     * @return The most frequent style or {@code null} when the counter is empty.
+     */
     public T getMostFrequent()
     {
         T ret = null;
@@ -57,6 +74,10 @@ public class StyleCounter<T>
         return ret;
     }
     
+    /**
+     * Obtains the most frequent style or styles when multiple of them have the maximal frequency.
+     * @return The list of styles with the maximal frequency.
+     */
     public List<T> getMostFrequentAll()
     {
         List<T> ret = new Vector<T>();
