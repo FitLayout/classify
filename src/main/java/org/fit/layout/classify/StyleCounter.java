@@ -5,9 +5,11 @@
  */
 package org.fit.layout.classify;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Vector;
 
 /**
@@ -94,8 +96,72 @@ public class StyleCounter<T>
         }
         return ret;
     }
+
+    /**
+     * Obtains all the registered styles and their frequencies.
+     * @return A map that assigns a frequency to each unique style.
+     */
+    public Map<T, Integer> getAll()
+    {
+    	return styles;
+    }
+    
+    /**
+     * Obtains all the registered styles and their frequencies, sort by frequenct.
+     * @return A map that assigns a frequency to each unique style.
+     */
+    public Map<T, Integer> getAllSorted()
+    {
+        Map<T, Integer> map = styles;
+        TreeMap<T, Integer> smap = new TreeMap<T, Integer>(new StyleCountComparator(map));
+        smap.putAll(map);
+        return smap;
+    }
     
     //==============================================================================================
     
+	@Override
+	public String toString() 
+	{
+		Map<T, Integer> map = getAllSorted();
+		StringBuilder ret = new StringBuilder();
+		for (Map.Entry<T, Integer> entry : map.entrySet())
+		{
+			ret.append(entry.getValue()).append("x(");
+			ret.append(entry.getKey().toString());
+			ret.append(") ");
+		}
+		return ret.toString();
+	}
+	
+    //==============================================================================================
+	
+    /**
+     * A comparator used for sorting style maps according to the style count.
+     */
+    class StyleCountComparator implements Comparator<T>
+    {
+        Map<T, Integer> base;
+
+        public StyleCountComparator(Map<T, Integer> base)
+        {
+            this.base = base;
+        }
+
+        // Note: this comparator imposes orderings that are inconsistent with
+        // equals.
+        public int compare(T a, T b)
+        {
+            if (base.get(a) >= base.get(b))
+            {
+                return -1;
+            }
+            else
+            {
+                return 1;
+            } // returning 0 would merge keys
+        }
+    }
+
     
 }
