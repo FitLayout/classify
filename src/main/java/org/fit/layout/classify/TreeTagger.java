@@ -130,11 +130,11 @@ public class TreeTagger /*implements NodeJoinAnalyzer*/
     {
         if (sharedClassifier == null)
         {
-            System.err.println("CLoading " + ClassLoader.getSystemResource("3class.gz") );
+            System.err.println("CLoading " + TreeTagger.class.getResource("/3class.gz") );
             InputStream is;
             try
             {
-                is = new GZIPInputStream(ClassLoader.getSystemResourceAsStream("3class.gz"));
+                is = new GZIPInputStream(TreeTagger.class.getResourceAsStream("/3class.gz"));
                 sharedClassifier = CRFClassifier.getClassifier(is);
             } catch (IOException e)
             {

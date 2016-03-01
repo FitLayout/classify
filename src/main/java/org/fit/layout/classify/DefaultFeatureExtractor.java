@@ -20,7 +20,9 @@ public abstract class DefaultFeatureExtractor implements FeatureExtractor
 
     protected Instances loadArffDatasetResource(String filename) throws Exception
     {
-        InputStream is = ClassLoader.getSystemResourceAsStream(filename);
+        if (!filename.startsWith("/"))
+            filename = "/" + filename;
+        InputStream is = DefaultFeatureExtractor.class.getResourceAsStream(filename);
         DataSource source = new DataSource(is);
         Instances tdata = source.getDataSet();
         tdata.setClassIndex(0);

@@ -104,7 +104,7 @@ public class VisualClassifier
             //analyze the path
             InputStream is;
             if (resource.startsWith("res:"))
-                is = ClassLoader.getSystemResourceAsStream(resource.substring(4));
+                is = ClassLoader.getSystemResourceAsStream("/" + resource.substring(4));
             else
                 is = new FileInputStream(resource);
             
