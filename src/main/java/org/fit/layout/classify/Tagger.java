@@ -61,8 +61,16 @@ public interface Tagger extends Service, ParametrizedOperation
     /**
      * Extracts the parts of a source string that correspond to this tag.
      * @param src The source string. 
-     * @return A vector of extracted strings.
+     * @return A list of extracted strings.
      */
     public List<String> extract(String src);
+    
+    /**
+     * Splits the string to substrings where each substring either corresponds to this tag
+     * or it does not correspond.
+     * @param src The source string.
+     * @return A list of strings; the contcatentation of the strings should put {@code src} back.
+     */
+    public List<String> split(String src);
     
 }
