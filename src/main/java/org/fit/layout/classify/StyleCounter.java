@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -104,6 +105,15 @@ public class StyleCounter<T>
     public Map<T, Integer> getAll()
     {
     	return styles;
+    }
+    
+    /**
+     * Obtains all distinct styles that have been seen independently on their frequencies.
+     * @return the set of available styles
+     */
+    public Set<T> getDistinctStyles()
+    {
+        return styles.keySet();
     }
     
     /**
