@@ -5,6 +5,7 @@
  */
 package org.fit.layout.classify;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -114,6 +115,27 @@ public class StyleCounter<T>
     public Set<T> getDistinctStyles()
     {
         return styles.keySet();
+    }
+    
+    /**
+     * Obtains the frequent style where the frequency is greater or equal than factor*max_frequency.
+     * @return The list of frequent styles
+     */
+    public List<T> getFrequentSyles(float factor)
+    {
+        List<T> ret = new ArrayList<T>();
+        int maxfreq = 0;
+        for (Map.Entry<T, Integer> entry : styles.entrySet())
+        {
+            if (entry.getValue() > maxfreq)
+                maxfreq = entry.getValue();
+        }
+        for (Map.Entry<T, Integer> entry : styles.entrySet())
+        {
+            if (entry.getValue() >= factor * maxfreq)
+                ret.add(entry.getKey());
+        }
+        return ret;
     }
     
     /**
