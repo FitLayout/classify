@@ -12,6 +12,10 @@ import org.fit.layout.model.Tag;
 
 public class TitleTagger extends BaseTagger
 {
+    private static final float YES = 0.6f;
+    private static final float COULDBE = 0.1f;
+    private static final float NO = 0.0f;
+    
     protected final int MIN_WORDS = 3;
     /** The expression the whole area must start with */
     protected Pattern areaexpr = Pattern.compile("[A-Z0-9]"); //uppercase or number
@@ -55,13 +59,7 @@ public class TitleTagger extends BaseTagger
     }
 
     @Override
-    public double getRelevance()
-    {
-        return 0.6;
-    }
-    
-    @Override
-    public boolean belongsTo(Area node)
+    public float belongsTo(Area node)
     {
         if (node.isLeaf())
         {
@@ -70,17 +68,23 @@ public class TitleTagger extends BaseTagger
             {
                 //check if there is a substring with the allowed format
                 Matcher match = titleexpr.matcher(text);
+                float ret = NO;
                 while (match.find())
                 {
                     String s = match.group();
                     String[] words = s.split("\\s+");
-                    if (words.length >= MIN_WORDS && !containsBlacklistedWord(words))
-                        return true;
+                    if (!containsBlacklistedWord(words))
+                    {
+                        if (words.length >= MIN_WORDS) 
+                            ret = YES;
+                        else
+                            ret = Math.max(ret, COULDBE);
+                    }
                 }
-                return false;
+                return ret;
             }
         }
-        return false;
+        return NO;
     }
 
     @Override

@@ -22,6 +22,9 @@ import org.fit.layout.model.Tag;
  */
 public class TimeTagger extends BaseTagger
 {
+    private static final float YES = 0.95f;
+    private static final float NO = 0.0f;
+    
     protected Pattern[] timeexpr = {Pattern.compile("[0-2]?[0-9][:\\.][0-5][0-9]([ap])?m?")};
     
     @Override
@@ -49,13 +52,7 @@ public class TimeTagger extends BaseTagger
     }
 
     @Override
-    public double getRelevance()
-    {
-        return 0.95;
-    }
-    
-    @Override
-    public boolean belongsTo(Area node)
+    public float belongsTo(Area node)
     {
         if (node.isLeaf())
         {
@@ -66,11 +63,11 @@ public class TimeTagger extends BaseTagger
                 for (Pattern p : timeexpr)
                 {
                     if (p.matcher(s).lookingAt()) 
-                        return true;
+                        return YES;
                 }
             }
         }
-        return false;
+        return NO;
     }
     
     @Override

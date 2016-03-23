@@ -22,6 +22,9 @@ import edu.stanford.nlp.util.Triple;
  */
 public class PersonsTagger extends NERTagger
 {
+    private static final float YES = 0.8f;
+    private static final float NO = 0.0f;
+    
     /** The expression describing the allowed format of the title continuation */
     protected Pattern contexpr = Pattern.compile("[A-Z][A-Za-z]"); 
 
@@ -81,17 +84,14 @@ public class PersonsTagger extends NERTagger
         this.mincnt = mincnt;
     }
 
+    @Override
     public TextTag getTag()
     {
         return new TextTag("persons", this);
     }
 
-    public double getRelevance()
-    {
-        return 0.8;
-    }
-    
-    public boolean belongsTo(Area node)
+    @Override
+    public float belongsTo(Area node)
     {
         if (node.isLeaf())
         {
@@ -103,10 +103,10 @@ public class PersonsTagger extends NERTagger
                 if (t.first().equals("PERSON"))
                     cnt++;
                 if (cnt >= mincnt)
-                    return true;
+                    return YES;
             }
         }
-        return false;
+        return NO;
     }
 
     public boolean allowsContinuation(Area node)

@@ -21,6 +21,9 @@ import edu.stanford.nlp.util.Triple;
  */
 public class LocationsTagger extends NERTagger
 {
+    private static final float YES = 0.8f;
+    private static final float NO = 0.0f;
+    
     private int mincnt;
     
     public LocationsTagger()
@@ -84,13 +87,7 @@ public class LocationsTagger extends NERTagger
     }
 
     @Override
-    public double getRelevance()
-    {
-        return 0.8;
-    }
-    
-    @Override
-    public boolean belongsTo(Area node)
+    public float belongsTo(Area node)
     {
         if (node.isLeaf())
         {
@@ -102,10 +99,10 @@ public class LocationsTagger extends NERTagger
                 if (t.first().equals("LOCATION"))
                     cnt++;
                 if (cnt >= mincnt)
-                    return true;
+                    return YES;
             }
         }
-        return false;
+        return NO;
     }
     
     @Override

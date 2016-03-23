@@ -27,6 +27,9 @@ import com.joestelmach.natty.Parser;
  */
 public class DateTagger extends BaseTagger
 {
+    private static final float YES = 0.95f;
+    private static final float NO = 0.0f;
+    
     private static Map<String, String> dw;
     static {
         dw = new HashMap<String, String>();
@@ -141,13 +144,7 @@ public class DateTagger extends BaseTagger
     }
 
     @Override
-    public double getRelevance()
-    {
-        return 0.95;
-    }
-    
-    @Override
-    public boolean belongsTo(Area node)
+    public float belongsTo(Area node)
     {
         if (node.isLeaf())
         {
@@ -159,14 +156,14 @@ public class DateTagger extends BaseTagger
                 for (Pattern p : dateexpr)
                 {
                     if (p.matcher(s).lookingAt()) 
-                        return true;
+                        return YES;
                 }
             }
             //try to find a sequence of known words
             words = text.split("\\W+");
-            return containsDate(words, 1);
+            return containsDate(words, 1) ? YES : NO;
         }
-        return false;
+        return NO;
     }
     
     @Override

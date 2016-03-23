@@ -27,17 +27,11 @@ public interface Tagger extends Service, ParametrizedOperation
     public TextTag getTag();
 
     /**
-     * Obtains the relevance of the tagger.
-     * @return the relevance  (0.0 no relevance, 1.0 means absolutely sure)
-     */
-    public double getRelevance();
-    
-    /**
      * Checks whether the area may be tagged with the tag. This method does not actually assign the tag to the area.
      * @param node The examined area node.
-     * @return <code>true</code> if the area should be tagged with the tag
+     * @return the relevance of the assignment (0.0 = not assigned, 0.1 = hopefully possible, >0.5 quite possible, 1.0 absolutely sure)
      */
-    public boolean belongsTo(Area node);
+    public float belongsTo(Area node);
     
     /**
      * Checks whether the area may be a continuation of a previously started area tagged with this tag.

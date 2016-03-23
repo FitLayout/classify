@@ -27,6 +27,7 @@ public class TreeTagger /*implements NodeJoinAnalyzer*/
 {
     //public static AbstractSequenceClassifier<?> sharedClassifier = CRFClassifier.getClassifierNoExceptions("/opt/java/classifiers/all.3class.distsim.crf.ser.gz");
     //public static AbstractSequenceClassifier<?> sharedClassifier = CRFClassifier.getClassifierNoExceptions(System.getProperty("user.home") + "/tmp/classifiers/all.3class.distsim.crf.ser.gz");
+    private static final float MIN_SUPPORT = 0.01f; //minimal returned support to assign the tag at all
     
     private static AbstractSequenceClassifier<?> sharedClassifier;
     
@@ -83,8 +84,9 @@ public class TreeTagger /*implements NodeJoinAnalyzer*/
     {
         for (Tagger t : taggers)
         {
-            if (t.belongsTo(area))
-                area.addTag(t.getTag(), (float) t.getRelevance());
+            float support = t.belongsTo(area); 
+            if (support > MIN_SUPPORT)
+                area.addTag(t.getTag(), support);
         }
     }
     
