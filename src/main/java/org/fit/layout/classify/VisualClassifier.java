@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 import org.fit.layout.model.Area;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.meta.FilteredClassifier;
@@ -24,6 +26,8 @@ import weka.filters.Filter;
  */
 public class VisualClassifier
 {
+    private static Logger log = LoggerFactory.getLogger(VisualClassifier.class);
+    
 	private Filter filter;
 	private AbstractClassifier classifier;
 	private Instances trainset;
@@ -104,9 +108,15 @@ public class VisualClassifier
             //analyze the path
             InputStream is;
             if (resource.startsWith("res:"))
-                is = ClassLoader.getSystemResourceAsStream("/" + resource.substring(4));
+                is = getClass().getResourceAsStream("/" + resource.substring(4));
             else
                 is = new FileInputStream(resource);
+
+            if (is == null)
+            {
+                log.error("Couldn't open training file {}", resource);
+                return;
+            }
             
             //open the data file
             DataSource source = new DataSource(is);
@@ -149,7 +159,7 @@ public class VisualClassifier
             
         } catch (Exception e) {
             classifier = null;
-            System.err.println("Classifier training failed: " + e.getMessage());
+            log.error("Classifier training failed: " + e.getMessage());
             e.printStackTrace();
         }
 	}
