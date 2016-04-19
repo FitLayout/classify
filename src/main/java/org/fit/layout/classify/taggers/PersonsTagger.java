@@ -23,8 +23,11 @@ import edu.stanford.nlp.util.Triple;
 public class PersonsTagger extends NERTagger
 {
     private static final float YES = 0.8f;
+    private static final float COULDBE = 0.1f;
     private static final float NO = 0.0f;
     
+    /** The expression describing the string that _could_ be a name */
+    protected Pattern couldexpr = Pattern.compile("\\p{Lu}[\\p{L}&&[^\\p{Lu}]]+\\s+\\p{Lu}[\\p{L}&&[^\\p{Lu}]]+");
     /** The expression describing the allowed format of the title continuation */
     protected Pattern contexpr = Pattern.compile("[A-Z][A-Za-z]"); 
 
@@ -105,8 +108,23 @@ public class PersonsTagger extends NERTagger
                 if (cnt >= mincnt)
                     return YES;
             }
+            //no name matched, try matching at least the format
+            if (checkAllowedFormat(text))
+                return COULDBE;
         }
         return NO;
+    }
+    
+    private boolean checkAllowedFormat(String text)
+    {
+        int cnt = 0;
+        while (couldexpr.matcher(text).find())
+        {
+            cnt++;
+            if (cnt >= mincnt)
+                return true;
+        }
+        return false;
     }
 
     public boolean allowsContinuation(Area node)
