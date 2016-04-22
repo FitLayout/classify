@@ -21,11 +21,12 @@ import org.fit.layout.model.AreaTree;
  */
 public class VisualClassificationOperator extends BaseOperator
 {
-    private final String[] paramNames = {"trainFile", "classIndex"};
-    private final ValueType[] paramTypes = {ValueType.STRING, ValueType.INTEGER};
+    private final String[] paramNames = {"trainFile", "classIndex", "classDistribution"};
+    private final ValueType[] paramTypes = {ValueType.STRING, ValueType.INTEGER, ValueType.BOOLEAN};
     
     private String trainFile;
     private int classIndex;
+    private boolean classDistribution;
     
     private FeatureExtractor features;
     private VisualClassifier vcls;
@@ -34,12 +35,14 @@ public class VisualClassificationOperator extends BaseOperator
     public VisualClassificationOperator()
     {
         features = new ArticleFeatureExtractor();
+        classDistribution = false;
     }
     
-    public VisualClassificationOperator(String trainFile, int classIndex)
+    public VisualClassificationOperator(String trainFile, int classIndex, boolean classDistribution)
     {
         this.trainFile = trainFile;
         this.classIndex = classIndex;
+        this.classDistribution = classDistribution;
     }
 
     @Override
@@ -92,6 +95,16 @@ public class VisualClassificationOperator extends BaseOperator
         this.classIndex = classIndex;
     }
 
+    public boolean getClassDistribution()
+    {
+        return classDistribution;
+    }
+
+    public void setClassDistribution(boolean classDistribution)
+    {
+        this.classDistribution = classDistribution;
+    }
+
     public FeatureExtractor getFeatures()
     {
         return features;
@@ -130,12 +143,35 @@ public class VisualClassificationOperator extends BaseOperator
     
     private void recursivelyAddTags(Area root)
     {
-        String cls = vcls.classifyArea(root);
-        if (cls != null && !cls.isEmpty() && !cls.equals("none"))
+        if (!classDistribution)
         {
-            VisualTag tag = new VisualTag(cls);
-            root.addTag(tag, 0.9f); //TODO obtain relevance form classifier?
+            String cls = vcls.classifyArea(root);
+            if (cls != null && !cls.isEmpty() && !cls.equals("none"))
+            {
+                VisualTag tag = new VisualTag(cls);
+                root.addTag(tag, 0.9f);
+            }
         }
+        else
+        {
+            double[] dist = vcls.distributionForArea(root);
+            if (dist != null)
+            {
+                for (int i = 0; i < dist.length; i++)
+                {
+                    if (dist[i] >= 0.1f)
+                    {
+                        String cname = vcls.getClassName(i);
+                        if (!cname.equals("none"))
+                        {
+                            VisualTag tag = new VisualTag(cname);
+                            root.addTag(tag, (float) dist[i]);
+                        }
+                    }
+                }
+            }
+        }
+        
         for (int i = 0; i < root.getChildCount(); i++)
             recursivelyAddTags(root.getChildArea(i));
     }
