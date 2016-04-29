@@ -1,2 +1,3 @@
 org.fit.layout.classify.op.TagEntitiesOperator
 org.fit.layout.classify.op.VisualClassificationOperator
+org.fit.layout.classify.op.CompareTagsOperator
