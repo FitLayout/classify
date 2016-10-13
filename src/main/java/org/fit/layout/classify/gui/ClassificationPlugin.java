@@ -151,7 +151,7 @@ public class ClassificationPlugin implements BrowserPlugin, AreaSelectionListene
     {
         //find tags of the given type
         Set<Tag> tags = new HashSet<Tag>();
-        for (Tag tag : root.getTags().keySet())
+        for (Tag tag : root.getSupportedTags(0.3f)) //TODO make configurable?
         {
             if (tag.getType().equals(type))
                 tags.add(tag);
