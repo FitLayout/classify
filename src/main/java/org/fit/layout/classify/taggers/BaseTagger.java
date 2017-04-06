@@ -27,4 +27,10 @@ public abstract class BaseTagger extends BaseParametrizedOperation implements Ta
         return new ValueType[]{};
     }
 
+    @Override
+    public String toString()
+    {
+        return getId();
+    }
+    
 }
