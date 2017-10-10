@@ -13,6 +13,8 @@ import java.util.zip.GZIPInputStream;
 
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
@@ -25,6 +27,8 @@ import edu.stanford.nlp.ie.crf.CRFClassifier;
  */
 public class TreeTagger /*implements NodeJoinAnalyzer*/
 {
+    private static Logger log = LoggerFactory.getLogger(TreeTagger.class);
+    
     //public static AbstractSequenceClassifier<?> sharedClassifier = CRFClassifier.getClassifierNoExceptions("/opt/java/classifiers/all.3class.distsim.crf.ser.gz");
     //public static AbstractSequenceClassifier<?> sharedClassifier = CRFClassifier.getClassifierNoExceptions(System.getProperty("user.home") + "/tmp/classifiers/all.3class.distsim.crf.ser.gz");
     private static final float MIN_SUPPORT = 0.01f; //minimal returned support to assign the tag at all
@@ -132,7 +136,7 @@ public class TreeTagger /*implements NodeJoinAnalyzer*/
     {
         if (sharedClassifier == null)
         {
-            System.err.println("CLoading " + TreeTagger.class.getResource("/3class.gz") );
+            log.info("Loading resource {}", TreeTagger.class.getResource("/3class.gz"));
             InputStream is;
             try
             {
