@@ -59,6 +59,12 @@ public class TagEntitiesOperator extends BaseOperator implements ScriptObject
     }
 
     @Override
+    public String getCategory()
+    {
+        return "classification";
+    }
+
+    @Override
     public String[] getParamNames()
     {
         return paramNames;

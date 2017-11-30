@@ -60,7 +60,13 @@ public class VisualClassificationOperator extends BaseOperator
     @Override
     public String getDescription()
     {
-        return "..."; //TODO
+        return "Adds tags to the visual areas based on the result of classification by a selected pre-trained classifier.";
+    }
+
+    @Override
+    public String getCategory()
+    {
+        return "classification";
     }
 
     @Override
