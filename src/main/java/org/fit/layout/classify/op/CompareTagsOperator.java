@@ -5,11 +5,15 @@
  */
 package org.fit.layout.classify.op;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.fit.layout.api.Parameter;
 import org.fit.layout.impl.BaseOperator;
 import org.fit.layout.impl.DefaultTag;
+import org.fit.layout.impl.ParameterString;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.AreaTree;
 import org.fit.layout.model.Tag;
@@ -21,9 +25,6 @@ import org.fit.layout.model.Tag;
  */
 public class CompareTagsOperator extends BaseOperator
 {
-    protected final String[] paramNames = {"srcType", "destType"};
-    protected final ValueType[] paramTypes = {ValueType.STRING, ValueType.STRING};
-    
     private String srcType;
     private String destType;
     
@@ -67,15 +68,12 @@ public class CompareTagsOperator extends BaseOperator
     }
 
     @Override
-    public String[] getParamNames()
+    public List<Parameter> defineParams()
     {
-        return paramNames;
-    }
-
-    @Override
-    public ValueType[] getParamTypes()
-    {
-        return paramTypes;
+        List<Parameter> ret = new ArrayList<>();
+        ret.add(new ParameterString("srcType"));
+        ret.add(new ParameterString("destType"));
+        return ret;
     }
 
     public String getSrcType()

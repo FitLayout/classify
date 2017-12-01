@@ -26,9 +26,6 @@ import org.fit.layout.model.AreaTree;
  */
 public class TagEntitiesOperator extends BaseOperator implements ScriptObject
 {
-    protected final String[] paramNames = {};
-    protected final ValueType[] paramTypes = {};
-    
     private TreeTagger tagger;
     private Map<String, Tagger> availableTaggers;
     private List<Tagger> usedTaggers;
@@ -62,18 +59,6 @@ public class TagEntitiesOperator extends BaseOperator implements ScriptObject
     public String getCategory()
     {
         return "classification";
-    }
-
-    @Override
-    public String[] getParamNames()
-    {
-        return paramNames;
-    }
-
-    @Override
-    public ValueType[] getParamTypes()
-    {
-        return paramTypes;
     }
 
     /**

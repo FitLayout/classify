@@ -5,11 +5,18 @@
  */
 package org.fit.layout.classify.op;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.fit.layout.api.Parameter;
 import org.fit.layout.classify.FeatureExtractor;
 import org.fit.layout.classify.VisualClassifier;
 import org.fit.layout.classify.VisualTag;
 import org.fit.layout.classify.articles.ArticleFeatureExtractor;
 import org.fit.layout.impl.BaseOperator;
+import org.fit.layout.impl.ParameterBoolean;
+import org.fit.layout.impl.ParameterInt;
+import org.fit.layout.impl.ParameterString;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.AreaTree;
 
@@ -21,9 +28,6 @@ import org.fit.layout.model.AreaTree;
  */
 public class VisualClassificationOperator extends BaseOperator
 {
-    private final String[] paramNames = {"trainFile", "classIndex", "classDistribution"};
-    private final ValueType[] paramTypes = {ValueType.STRING, ValueType.INTEGER, ValueType.BOOLEAN};
-    
     private String trainFile;
     private int classIndex;
     private boolean classDistribution;
@@ -70,15 +74,13 @@ public class VisualClassificationOperator extends BaseOperator
     }
 
     @Override
-    public String[] getParamNames()
+    public List<Parameter> defineParams()
     {
-        return paramNames;
-    }
-
-    @Override
-    public ValueType[] getParamTypes()
-    {
-        return paramTypes;
+        List<Parameter> ret = new ArrayList<>();
+        ret.add(new ParameterString("trainFile"));
+        ret.add(new ParameterInt("classIndex"));
+        ret.add(new ParameterBoolean("classDistribution"));
+        return ret;
     }
 
     public String getTrainFile()

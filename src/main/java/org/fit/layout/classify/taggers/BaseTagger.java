@@ -16,18 +16,6 @@ public abstract class BaseTagger extends BaseParametrizedOperation implements Ta
 {
 
     @Override
-    public String[] getParamNames()
-    {
-        return new String[]{};
-    }
-
-    @Override
-    public ValueType[] getParamTypes()
-    {
-        return new ValueType[]{};
-    }
-
-    @Override
     public String toString()
     {
         return getId();

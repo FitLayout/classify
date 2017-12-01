@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.fit.layout.api.Parameter;
 import org.fit.layout.classify.TextTag;
+import org.fit.layout.impl.ParameterInt;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
 
@@ -59,15 +61,11 @@ public class LocationsTagger extends NERTagger
     }
     
     @Override
-    public String[] getParamNames()
+    public List<Parameter> defineParams()
     {
-        return new String[]{"mincnt"};
-    }
-
-    @Override
-    public ValueType[] getParamTypes()
-    {
-        return new ValueType[]{ValueType.INTEGER};
+        List<Parameter> ret = new ArrayList<>(1);
+        ret.add(new ParameterInt("mincnt"));
+        return ret;
     }
     
     public int getMincnt()
