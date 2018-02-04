@@ -320,6 +320,8 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
      */
     public double getIndentation(Area node)
     {
+        //TODO this must be completely rewritten for the new API
+        /*
         final double max_levels = 3;
         
         if (node.getTopology().getPreviousOnLine() != null)
@@ -331,7 +333,8 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
                 ind = ind - (node.getTopology().getPosition().getX1() - node.getParentArea().getTopology().getMinIndent());
             if (ind < 0) ind = 0;
             return ind / max_levels;
-        }
+        }*/
+        return 0;
     }
     
     /**
@@ -347,7 +350,7 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
         for (int i = 0; i < a.getChildCount(); i++)
         {
             Area n = a.getChildArea(i);
-            if (n.getTopology().getPosition().intersects(r))
+            if (a.getTopology().getPosition(n).intersects(r))
                 ret++;
         }
         return ret;
@@ -355,10 +358,10 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
     
     private int countAreasAbove(Area a)
     {
-        Rectangular gp = a.getTopology().getPosition();
         Area parent = a.getParentArea();
         if (parent != null)
         {
+            Rectangular gp = parent.getTopology().getPosition(a);
             Rectangular r = new Rectangular(gp.getX1(), 0, gp.getX2(), gp.getY1() - 1);
             return countAreas(parent, r);
         }
@@ -368,10 +371,10 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
 
     private int countAreasBelow(Area a)
     {
-        Rectangular gp = a.getTopology().getPosition();
         Area parent = a.getParentArea();
         if (parent != null)
         {
+            Rectangular gp = parent.getTopology().getPosition(a);
             Rectangular r = new Rectangular(gp.getX1(), gp.getY2()+1, gp.getX2(), Integer.MAX_VALUE);
             return countAreas(parent, r);
         }
@@ -381,10 +384,10 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
 
     private int countAreasLeft(Area a)
     {
-        Rectangular gp = a.getTopology().getPosition();
         Area parent = a.getParentArea();
         if (parent != null)
         {
+            Rectangular gp = parent.getTopology().getPosition(a);
             Rectangular r = new Rectangular(0, gp.getY1(), gp.getX1() - 1, gp.getY2());
             return countAreas(parent, r);
         }
@@ -394,10 +397,10 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
 
     private int countAreasRight(Area a)
     {
-        Rectangular gp = a.getTopology().getPosition();
         Area parent = a.getParentArea();
         if (parent != null)
         {
+            Rectangular gp = parent.getTopology().getPosition(a);
             Rectangular r = new Rectangular(gp.getX2()+1, gp.getY1(), Integer.MAX_VALUE, gp.getY2());
             return countAreas(parent, r);
         }

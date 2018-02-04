@@ -9,7 +9,6 @@ import java.awt.Color;
 import java.util.Vector;
 
 import org.fit.layout.model.Area;
-import org.fit.layout.model.AreaTopology;
 import org.fit.layout.model.Box;
 
 /**
@@ -135,6 +134,7 @@ public class NodeStyle
     
     private double computeIndentation(Area area)
     {
+        /* TODO this must be completely rewritten for the new API
         final double max_levels = 3;
         final AreaTopology topo = area.getTopology();
         
@@ -143,11 +143,12 @@ public class NodeStyle
         else
         {
             double ind = max_levels;
-            if (/*!node.isCentered() &&*/ area.getParentArea() != null)
+            if (!node.isCentered() && area.getParentArea() != null)
                 ind = ind - (topo.getPosition().getX1() - area.getParentArea().getTopology().getMinIndent());
             if (ind < 0) ind = 0;
             return ind / max_levels;
-        }
+        }*/
+        return 0;
     }
 
 }
