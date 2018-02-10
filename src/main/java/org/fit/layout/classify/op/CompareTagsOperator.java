@@ -141,7 +141,7 @@ public class CompareTagsOperator extends BaseOperator
         }
         
         for (int i = 0; i < root.getChildCount(); i++)
-            recursiveCheckAreas(root.getChildArea(i));
+            recursiveCheckAreas(root.getChildAt(i));
     }
     
     private void checkTag(Area a, String name)

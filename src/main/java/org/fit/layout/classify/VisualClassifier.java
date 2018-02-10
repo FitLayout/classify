@@ -195,7 +195,7 @@ public class VisualClassifier
 	    mapping.put(root, data);
 	    //repeat recursively for subareas
 	    for (int i = 0; i < root.getChildCount(); i++)
-	        recursivelyExtractAreaData(root.getChildArea(i));
+	        recursivelyExtractAreaData(root.getChildAt(i));
 	}
 	
 }

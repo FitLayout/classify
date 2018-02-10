@@ -77,7 +77,7 @@ public class TreeTagger /*implements NodeJoinAnalyzer*/
     {
         tagSingleNode(root);
         for (int i = 0; i < root.getChildCount(); i++)
-            tagSubtree(root.getChildArea(i));
+            tagSubtree(root.getChildAt(i));
     }
     
     /**

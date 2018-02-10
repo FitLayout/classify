@@ -242,7 +242,7 @@ public class AnnotatorPlugin implements BrowserPlugin, AreaSelectionListener, Tr
         }
         //display the tags
         browser.getOutputDisplay().colorizeByTags(root, tags);
-        for (Area child : root.getChildAreas())
+        for (Area child : root.getChildren())
             recursiveColorizeTags(child, type);
     }
 

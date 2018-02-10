@@ -97,7 +97,7 @@ public class InstanceExtractor
         dest.add(newinst);
         
         for (int i = 0; i < root.getChildCount(); i++)
-            recursiveExtractInstances(root.getChildArea(i), dest);
+            recursiveExtractInstances(root.getChildAt(i), dest);
     }
     
     

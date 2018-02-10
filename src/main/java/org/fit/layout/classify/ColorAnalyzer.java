@@ -78,7 +78,7 @@ public class ColorAnalyzer
         
         for (int i = 0; i < node.getChildCount(); i++)
         {
-            Area child = node.getChildArea(i);
+            Area child = node.getChildAt(i);
             int nlen = letterLength(child.getText());
             tlen += nlen;
             sum += getColorPercentage(child) * nlen;
@@ -110,7 +110,7 @@ public class ColorAnalyzer
     		}
     	}
         for (int i = 0; i < root.getChildCount(); i++)
-            computeRootStatistics(root.getChildArea(i));
+            computeRootStatistics(root.getChildAt(i));
     }
     
     private int letterLength(String s)

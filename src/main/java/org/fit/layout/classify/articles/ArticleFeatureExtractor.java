@@ -231,7 +231,7 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
      */
     private int isCentered(Area area, boolean askBefore, boolean askAfter)
     {
-        Area parent = area.getParentArea();
+        Area parent = area.getParent();
         if (parent != null)
         {
             int left = area.getX1() - parent.getX1();
@@ -349,7 +349,7 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
         
         for (int i = 0; i < a.getChildCount(); i++)
         {
-            Area n = a.getChildArea(i);
+            Area n = a.getChildAt(i);
             if (a.getTopology().getPosition(n).intersects(r))
                 ret++;
         }
@@ -358,7 +358,7 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
     
     private int countAreasAbove(Area a)
     {
-        Area parent = a.getParentArea();
+        Area parent = a.getParent();
         if (parent != null)
         {
             Rectangular gp = parent.getTopology().getPosition(a);
@@ -371,7 +371,7 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
 
     private int countAreasBelow(Area a)
     {
-        Area parent = a.getParentArea();
+        Area parent = a.getParent();
         if (parent != null)
         {
             Rectangular gp = parent.getTopology().getPosition(a);
@@ -384,7 +384,7 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
 
     private int countAreasLeft(Area a)
     {
-        Area parent = a.getParentArea();
+        Area parent = a.getParent();
         if (parent != null)
         {
             Rectangular gp = parent.getTopology().getPosition(a);
@@ -397,7 +397,7 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
 
     private int countAreasRight(Area a)
     {
-        Area parent = a.getParentArea();
+        Area parent = a.getParent();
         if (parent != null)
         {
             Rectangular gp = parent.getTopology().getPosition(a);
@@ -443,8 +443,8 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
         
         for (int i = 0; i < a.getChildCount(); i++)
         {
-            int l = a.getChildArea(i).getText().length();
-            sum += getAverageTextLuminosity(a.getChildArea(i)) * l;
+            int l = a.getChildAt(i).getText().length();
+            sum += getAverageTextLuminosity(a.getChildAt(i)) * l;
             cnt += l;
         }
         
@@ -575,7 +575,7 @@ public class ArticleFeatureExtractor extends DefaultFeatureExtractor
     {
         Set<Tag> ret = new HashSet<Tag>(area.getTags().keySet());
         for (int i = 0; i < area.getChildCount(); i++)
-            ret.addAll(area.getChildArea(i).getTags().keySet());
+            ret.addAll(area.getChildAt(i).getTags().keySet());
         return ret;
     }
     

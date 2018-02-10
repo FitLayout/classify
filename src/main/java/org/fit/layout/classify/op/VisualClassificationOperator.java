@@ -181,6 +181,6 @@ public class VisualClassificationOperator extends BaseOperator
         }
         
         for (int i = 0; i < root.getChildCount(); i++)
-            recursivelyAddTags(root.getChildArea(i));
+            recursivelyAddTags(root.getChildAt(i));
     }
 }

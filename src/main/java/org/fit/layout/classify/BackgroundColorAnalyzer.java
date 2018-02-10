@@ -92,7 +92,7 @@ public class BackgroundColorAnalyzer
         }
         
         for (int i = 0; i < root.getChildCount(); i++)
-            computeRootStatistics(root.getChildArea(i));
+            computeRootStatistics(root.getChildAt(i));
     }
     
     /**
@@ -115,8 +115,8 @@ public class BackgroundColorAnalyzer
             return area.getBackgroundColor();
         else
         {
-            if (area.getParentArea() != null)
-                return getEffectiveBackgroundColor(area.getParentArea());
+            if (area.getParent() != null)
+                return getEffectiveBackgroundColor(area.getParent());
             else
                 return Color.WHITE; //use white as the default root color
         }
