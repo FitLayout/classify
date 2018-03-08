@@ -72,14 +72,22 @@ public class CreateChunkAreasOperator extends BaseOperator
     {
         if (root.isLeaf())
         {
+            List<Area> toAppend = new ArrayList<>();
             for (Tag t : root.getSupportedTags(0.25f)) //TODO make this configurable
             {
                 if (t instanceof TextTag)
                 {
                     List<Area> newAreas = createAreaFromTag(root, (TextTag) t);
                     System.out.println(root + " : " + t + " : " + newAreas);
+                    for (Area a : newAreas)
+                    {
+                        a.setName("<chunk:" + t.getValue() + ">");
+                        toAppend.add(a);
+                    }
                 }
             }
+            for (Area a : toAppend)
+                root.appendChild(a);
         }
         else
         {
