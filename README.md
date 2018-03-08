@@ -1,6 +1,6 @@
-FIT Layout Analysis Framework - Segmentation Algorithms
-=======================================================
-(c) 2014 Radek Burget (burgetr@fit.vutbr.cz)
+FIT Layout Analysis Framework - Area Classification and Tagging
+===============================================================
+(c) 2014-2018 Radek Burget (burgetr@fit.vutbr.cz)
 
 See the project page for more information and downloads:
 [http://www.fit.vutbr.cz/~burgetr/FITLayout/](http://www.fit.vutbr.cz/~burgetr/FITLayout/)
