@@ -139,7 +139,7 @@ public class StyleCounter<T>
     }
     
     /**
-     * Obtains all the registered styles and their frequencies, sort by frequenct.
+     * Obtains all the registered styles and their frequencies, sorted by frequency.
      * @return A map that assigns a frequency to each unique style.
      */
     public Map<T, Integer> getAllSorted()
@@ -148,6 +148,24 @@ public class StyleCounter<T>
         TreeMap<T, Integer> smap = new TreeMap<T, Integer>(new StyleCountComparator(map));
         smap.putAll(map);
         return smap;
+    }
+    
+    /**
+     * Computes the percentage of the given style among all the style occurences.
+     * @param style the style
+     * @return the style percentage
+     */
+    public double getPercentage(T style)
+    {
+        int scnt = 0;
+        int allcnt = 0;
+        for (Map.Entry<T, Integer> entry : getAll().entrySet())
+        {
+            if (entry.getKey().equals(style))
+                scnt = entry.getValue();
+            allcnt += entry.getValue();
+        }
+        return scnt / (double) allcnt;
     }
     
     //==============================================================================================
