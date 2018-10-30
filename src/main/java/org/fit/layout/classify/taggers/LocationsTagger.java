@@ -7,9 +7,9 @@ package org.fit.layout.classify.taggers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.fit.layout.api.Parameter;
+import org.fit.layout.classify.TagOccurrence;
 import org.fit.layout.classify.TextTag;
 import org.fit.layout.impl.ParameterInt;
 import org.fit.layout.model.Area;
@@ -122,14 +122,14 @@ public class LocationsTagger extends NERTagger
     }
     
     @Override
-    public List<String> extract(String src)
+    public List<TagOccurrence> extract(String src)
     {
-        Vector<String> ret = new Vector<String>();
+        List<TagOccurrence> ret = new ArrayList<>();
         List<Triple<String,Integer,Integer>> list = getClassifier().classifyToCharacterOffsets(src);
         for (Triple<String,Integer,Integer> t : list)
         {
             if (t.first().equals("LOCATION"))
-                ret.add(src.substring(t.second(), t.third()));
+                ret.add(new TagOccurrence(src.substring(t.second(), t.third()), t.second(), YES));
         }
         return ret;
     }

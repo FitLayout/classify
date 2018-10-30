@@ -6,6 +6,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.fit.layout.classify.TagOccurrence;
 import org.fit.layout.classify.TextTag;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
@@ -114,17 +115,18 @@ public class TitleTagger extends BaseTagger
     }
     
     @Override
-    public List<String> extract(String src)
+    public List<TagOccurrence> extract(String src)
     {
-        Vector<String> ret = new Vector<String>();
+        List<TagOccurrence> ret = new ArrayList<>();
         
         Matcher match = titleexpr.matcher(src);
         while (match.find())
         {
-            String s = match.group();
-            String[] words = s.split("\\s+");
+            TagOccurrence occ = new TagOccurrence(match.group(), match.start(), COULDBE);
+            String[] words = occ.getText().split("\\s+");
             if (words.length >= MIN_WORDS)
-                ret.add(s);
+                occ.setSupport(YES);
+            ret.add(occ);
         }
         
         return ret;

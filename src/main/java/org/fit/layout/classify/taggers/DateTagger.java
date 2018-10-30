@@ -10,10 +10,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.fit.layout.classify.TagOccurrence;
 import org.fit.layout.classify.TextTag;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
@@ -185,9 +185,9 @@ public class DateTagger extends BaseTagger
     }
     
     @Override
-    public List<String> extract(String src)
+    public List<TagOccurrence> extract(String src)
     {
-        Vector<String> ret = new Vector<String>();
+        List<TagOccurrence> ret = new ArrayList<>();
         
         //check for common formats
         String[] words = src.toLowerCase().split("[^0-9\\-]");
@@ -198,7 +198,7 @@ public class DateTagger extends BaseTagger
                 Matcher match = p.matcher(s);
                 if (match.lookingAt())
                 {
-                    ret.add(match.group());
+                    ret.add(new TagOccurrence(match.group(), match.start(), YES));
                 }
             }
         }
@@ -215,7 +215,7 @@ public class DateTagger extends BaseTagger
                     if (i != dfirst) s += " ";
                     s += words[i];
                 }
-                ret.add(s);
+                ret.add(new TagOccurrence(s, src.indexOf(words[dfirst]), YES));
             }
         }
         return ret;
@@ -232,12 +232,12 @@ public class DateTagger extends BaseTagger
 
     public List<Date> extractDates(String s)
     {
-        Vector<Date> ret = new Vector<Date>();
+        List<Date> ret = new ArrayList<Date>();
         
-        List<String> srcdates = extract(s);
-        for (String sdate : srcdates)
+        List<TagOccurrence> srcdates = extract(s);
+        for (TagOccurrence sdate : srcdates)
         {
-            String[] words = sdate.toLowerCase().split("\\s+");
+            String[] words = sdate.getText().toLowerCase().split("\\s+");
             if (words.length == 1)
             {
                 ret.add(strToDate(words[0]));

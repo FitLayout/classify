@@ -57,7 +57,7 @@ public interface Tagger extends Service, ParametrizedOperation
      * @param src The source string. 
      * @return A list of extracted strings.
      */
-    public List<String> extract(String src);
+    public List<TagOccurrence> extract(String src);
     
     /**
      * Splits the string to substrings where each substring either corresponds to this tag

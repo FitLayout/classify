@@ -7,10 +7,10 @@ package org.fit.layout.classify.taggers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.fit.layout.classify.TagOccurrence;
 import org.fit.layout.classify.TextTag;
 import org.fit.layout.model.Area;
 import org.fit.layout.model.Tag;
@@ -89,11 +89,12 @@ public class TimeTagger extends BaseTagger
     }
     
     @Override
-    public List<String> extract(String src)
+    public List<TagOccurrence> extract(String src)
     {
-        Vector<String> ret = new Vector<String>();
+        List<TagOccurrence> ret = new ArrayList<>();
         
         String[] words = src.toLowerCase().split("[^0-9:\\.apm]");
+        int lastIndex = 0;
         for (String s : words)
         {
             for (Pattern p : timeexpr)
@@ -101,7 +102,10 @@ public class TimeTagger extends BaseTagger
                 Matcher match = p.matcher(s);
                 if (match.lookingAt())
                 {
-                    ret.add(match.group());
+                    String text = match.group();
+                    int pos = src.indexOf(text, lastIndex);
+                    ret.add(new TagOccurrence(text, pos, YES));
+                    lastIndex = pos + 1;
                 }
             }
         }

@@ -8,6 +8,7 @@ package org.fit.layout.classify.op;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.fit.layout.classify.TagOccurrence;
 import org.fit.layout.classify.Tagger;
 import org.fit.layout.classify.TextTag;
 import org.fit.layout.impl.BaseOperator;
@@ -104,19 +105,13 @@ public class CreateChunkAreasOperator extends BaseOperator
         for (Box box : a.getBoxes())
         {
             String text = box.getOwnText();
-            List<String> occurences = tg.extract(text);
-            int last = 0;
-            for (String occ : occurences)
+            List<TagOccurrence> occurences = tg.extract(text);
+            for (TagOccurrence occ : occurences)
             {
                 System.out.println("occ: " + occ);
-                int pos = text.indexOf(occ, last);
-                if (pos != -1)
-                {
-                    Rectangular r = box.getSubstringBounds(pos, pos + occ.length());
-                    Area newArea = new DefaultArea(r);
-                    ret.add(newArea);
-                    last = pos + occ.length();
-                }
+                Rectangular r = box.getSubstringBounds(occ.getPosition(), occ.getPosition() + occ.getLength());
+                Area newArea = new DefaultArea(r);
+                ret.add(newArea);
             }
         }
         return ret;
