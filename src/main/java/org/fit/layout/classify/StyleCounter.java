@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Vector;
 
 /**
  * Statistical analyzer of style occurences. Any implementation of the style may be provided,
@@ -59,6 +58,21 @@ public class StyleCounter<T>
     }
     
     /**
+     * Gets the number of the most frequent entry.
+     * @return the number of occurences of the most frequent entry
+     */
+    public int getMaximalFrequency()
+    {
+        int maxfreq = 0;
+        for (Map.Entry<T, Integer> entry : styles.entrySet())
+        {
+            if (entry.getValue() > maxfreq)
+                maxfreq = entry.getValue();
+        }
+        return maxfreq;
+    }
+    
+    /**
      * Obtains the most frequent style. If there are multiple styles with the same frequency then
      * only one of them is returned.
      * @return The most frequent style or {@code null} when the counter is empty.
@@ -84,13 +98,8 @@ public class StyleCounter<T>
      */
     public List<T> getMostFrequentAll()
     {
-        List<T> ret = new Vector<T>();
-        int maxfreq = 0;
-        for (Map.Entry<T, Integer> entry : styles.entrySet())
-        {
-            if (entry.getValue() > maxfreq)
-                maxfreq = entry.getValue();
-        }
+        List<T> ret = new ArrayList<T>();
+        int maxfreq = getMaximalFrequency();
         for (Map.Entry<T, Integer> entry : styles.entrySet())
         {
             if (entry.getValue() == maxfreq)
@@ -118,24 +127,32 @@ public class StyleCounter<T>
     }
     
     /**
-     * Obtains the frequent style where the frequency is greater or equal than factor*max_frequency.
+     * Obtains the frequent style where the frequency is greater or equal than factor*max_frequency
+     * where max_frequency may be specified arbitrarily.
+     * @param factor the frequency factor
+     * @param maxfreq the maximal frequency equal to factor 1.0
      * @return The list of frequent styles
      */
-    public List<T> getFrequentSyles(float factor)
+    public List<T> getFrequentStyles(float factor, int maxfreq)
     {
         List<T> ret = new ArrayList<T>();
-        int maxfreq = 0;
-        for (Map.Entry<T, Integer> entry : styles.entrySet())
-        {
-            if (entry.getValue() > maxfreq)
-                maxfreq = entry.getValue();
-        }
         for (Map.Entry<T, Integer> entry : styles.entrySet())
         {
             if (entry.getValue() >= factor * maxfreq)
                 ret.add(entry.getKey());
         }
         return ret;
+    }
+    
+    /**
+     * Obtains the frequent style where the frequency is greater or equal than factor*max_frequency
+     * where max_frequency is the frequency of the most frequent item as returned by {@link #getMaximalFrequency()}.
+     * @param factor the frequency factor
+     * @return The list of frequent styles
+     */
+    public List<T> getFrequentStyles(float factor)
+    {
+        return getFrequentStyles(factor, getMaximalFrequency());
     }
     
     /**
