@@ -72,15 +72,8 @@ public abstract class IntegerTagger extends BaseTagger
             Matcher match = getNumExpr().matcher(text);
             while (match.find())
             {
-                final int ms = match.start();
-                final int me = match.end();
-                if ((ms == 0 || !Character.isAlphabetic(text.codePointAt(ms))) && //require something non-alphabetic chars around
-                    (me == text.length() || !Character.isAlphabetic(text.codePointAt(me))))
-                {
-                    int num = Integer.parseInt(match.group());
-                    if (num >= getMin() && num <= getMax())
-                        return YES;
-                }
+                if (validateMatch(text, match.group(), match.start(), match.end()))
+                    return YES;
             }
         }
         return NO;
@@ -111,7 +104,8 @@ public abstract class IntegerTagger extends BaseTagger
         Matcher match = getNumExpr().matcher(src);
         while (match.find())
         {
-            ret.add(new TagOccurrence(match.group(), match.start(), YES));
+            if (validateMatch(src, match.group(), match.start(), match.end()))
+                ret.add(new TagOccurrence(match.group(), match.start(), YES));
         }
         
         return ret;
@@ -140,6 +134,31 @@ public abstract class IntegerTagger extends BaseTagger
         return ret;
     }
 
+    /**
+     * Validates the substring match -- checks the neighborhood and numeric range. This may be overriden
+     * for particular use cases.
+     * @param srcString the whole source string
+     * @param substring the matched substring
+     * @param matchStart start index of the substring in the whole string
+     * @param matchEnd end index of the substring in the whole string
+     * @return true when the match corresponds to the number range and other limitations
+     */
+    protected boolean validateMatch(String srcString, String substring, int matchStart, int matchEnd)
+    {
+        if ((matchStart == 0 || !Character.isAlphabetic(srcString.codePointAt(matchStart))) && //require something non-alphabetic chars around
+                (matchEnd == srcString.length() || !Character.isAlphabetic(srcString.codePointAt(matchEnd))))
+        {
+            final int num = Integer.parseInt(substring);
+            return validateRange(num);
+        }
+        return false;
+    }
+    
+    protected boolean validateRange(int value)
+    {
+        return (value >= getMin() && value <= getMax());
+    }
+    
     protected Pattern getNumExpr()
     {
         if (numexpr == null)
