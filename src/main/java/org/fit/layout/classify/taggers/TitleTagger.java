@@ -17,7 +17,10 @@ public class TitleTagger extends BaseTagger
     private static final float COULDBE = 0.1f;
     private static final float NO = 0.0f;
     
-    protected final int MIN_WORDS = 3;
+    /** Minimal number of words required in the title */
+    private int minWords = 3;
+    /** Minimal length of a word */
+    private int minWordLength = 3;
     /** The expression the whole area must start with */
     protected Pattern areaexpr = Pattern.compile("[A-Z0-9]"); //uppercase or number
     /** The expression describing the allowed title format */
@@ -59,6 +62,16 @@ public class TitleTagger extends BaseTagger
         return new TextTag("title", this);
     }
 
+    public int getMinWords()
+    {
+        return minWords;
+    }
+
+    public void setMinWords(int minWords)
+    {
+        this.minWords = minWords;
+    }
+
     @Override
     public float belongsTo(Area node)
     {
@@ -76,7 +89,7 @@ public class TitleTagger extends BaseTagger
                     String[] words = s.split("\\s+");
                     if (!containsBlacklistedWord(words))
                     {
-                        if (words.length >= MIN_WORDS) 
+                        if (wordCount(words) >= minWords) 
                             ret = YES;
                         else
                             ret = Math.max(ret, COULDBE);
@@ -124,7 +137,7 @@ public class TitleTagger extends BaseTagger
         {
             TagOccurrence occ = new TagOccurrence(match.group(), match.start(), COULDBE);
             String[] words = occ.getText().split("\\s+");
-            if (words.length >= MIN_WORDS)
+            if (wordCount(words) >= minWords)
                 occ.setSupport(YES);
             ret.add(occ);
         }
@@ -163,5 +176,15 @@ public class TitleTagger extends BaseTagger
         return false;
     }
     
+    protected int wordCount(String[] words)
+    {
+        int cnt = 0;
+        for (String w : words)
+        {
+            if (w.length() >= minWordLength)
+                cnt++;
+        }
+        return cnt;
+    }
     
 }
